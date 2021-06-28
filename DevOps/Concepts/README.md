@@ -1,3 +1,0 @@
-# Concepts
-
-source: `{{ page.path }}`
