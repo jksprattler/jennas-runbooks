@@ -1,4 +1,4 @@
-title: jekyll-rtd-theme
+title: Jenna's Runbooks
 description: Just another documentation theme compatible with GitHub Pages
 
 theme: null
@@ -29,5 +29,3 @@ exclude:
   - package-lock.json
   - webpack.config.js
   - jekyll-rtd-theme.gemspec
-
-baseurl: "jennas-runbooks"
