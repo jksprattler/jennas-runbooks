@@ -1,3 +1,0 @@
-# SCM
-
-source: `{{ page.path }}`
