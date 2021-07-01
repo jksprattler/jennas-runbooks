@@ -47,6 +47,7 @@ I'll be creating DNS Records using Route 53 however, you can use another domain 
 - `BucketPolicy` has `s3:GetObject` action set to allow so that anyone can read the object data and view the website
 - `WebsiteConfiguration` enables the static website capability in S3 
 - `WWWBucket` creates an empty bucket only used to redirect www.FIXME.com traffic to your FIXME.com bucket and is only needed if you don't plan on using CloudFront and decide to just host content from S3 only.
+
 ```scss
 ---
 AWSTemplateFormatVersion: '2010-09-09'
@@ -163,6 +164,7 @@ Outputs:
         ]
     }
 ```
+
 3. Create a new IAM User with programmatic access and attach the IAM Policy you just created above.
 4. Copy the AWS access key ID and Secret access key to a safe location such as secrets manager or key vault, as they'll be used in the GitHub Action Workflow setup below.
 
@@ -170,6 +172,7 @@ Outputs:
 
 1. From within your GitHub repo navigate to .github/workflows/ and create a new file called `build-and-deploy.yml`
 2. Copy and paste the following into your newly created GitHub Action workflow and update the FIXME value for the region that your S3 bucked was deployed in.
+
 ```scss
 name: CI / CD
 
@@ -219,6 +222,7 @@ jobs:
     - name: "Create AWS Cloudfront Invalidation"
       run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
 ```
+
 3. Navigate to Your Repo > Settings > Secrets > Actions
 4. Configure The GitHub Action Secrets for the following:
 - `AWS_ACCESS_KEY_ID` - The AWS access key ID associated with the programmatic IAM User created previously.
