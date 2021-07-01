@@ -1,5 +1,7 @@
 # Jekyll Site Hosted on AWS S3 using Github Actions
 
-{% last_modified_at %}
+---
+last-modified: 2021-07-01
+---
 
 # Coming Soon!
