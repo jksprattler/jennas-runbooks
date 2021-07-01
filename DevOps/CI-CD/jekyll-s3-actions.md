@@ -122,6 +122,7 @@ Outputs:
     Value: !GetAtt S3Bucket.Arn
     Description: S3 bucket ARN
 ```
+
 2. Navigate to the region closest to you and go to the CloudFormation service
 3. Upload your updated CFT stack to create your new S3 buckets for hosting your static website files.
 4. Capture your S3 Endpoint URL - you can find this by navigating to your new S3 Bucket > Properties > Static web site hosting > Endpoint
@@ -137,6 +138,7 @@ Outputs:
 #### Create IAM Policy and IAM User for Github Actions
 1. Navigate to IAM and [create a new IAM Policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-console.html#access_policies_create-json-editor) using the JSON editor.
 2. Paste the following policy contents into the JSON editor and update all "FIXME" values for your bucket name, AWS account ID and CloudFront ID which is the alphanumeric 14 characters of your associated Cloudfront distribution:
+
 ```scss
     {
         "Version": "2012-10-17",
@@ -162,7 +164,7 @@ Outputs:
     }
 ```
 3. Create a new IAM User with programmatic access and attach the IAM Policy you just created above.
-4. Copy the AWS access key ID and Secret access key to a secrets manager or key vault, as they'll be used in the GitHub Action Workflow setup below.
+4. Copy the AWS access key ID and Secret access key to a safe location such as secrets manager or key vault, as they'll be used in the GitHub Action Workflow setup below.
 
 #### Create GitHub Action Workflow 
 
