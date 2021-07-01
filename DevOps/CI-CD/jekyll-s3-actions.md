@@ -47,7 +47,6 @@ I'll be creating DNS Records using Route 53 however, you can use another domain 
 - `BucketPolicy` has `s3:GetObject` action set to allow so that anyone can read the object data and view the website
 - `WebsiteConfiguration` enables the static website capability in S3 
 - `WWWBucket` creates an empty bucket only used to redirect www.FIXME.com traffic to your FIXME.com bucket and is only needed if you don't plan on using CloudFront and decide to just host content from S3 only.
-
 ```scss
 ---
 AWSTemplateFormatVersion: '2010-09-09'
@@ -169,7 +168,6 @@ Outputs:
 
 1. From within your GitHub repo navigate to .github/workflows/ and create a new file called `build-and-deploy.yml`
 2. Copy and paste the following into your newly created GitHub Action workflow and update the FIXME value for the region that your S3 bucked was deployed in.
-
 ```scss
 name: CI / CD
 
