@@ -39,6 +39,82 @@ I'll be creating DNS Records using Route 53 however, you can use another domain 
 
 #### Create S3 Bucket
 
+```scss
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+
+Description: Simple S3 Bucket to host static public website.
+
+
+Resources:
+
+
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: jennasprattler.com
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      Tags:
+        -
+          Key: Description
+          Value: Resume Website
+        - Key: Project
+          Value: jennasprattler.com
+      VersioningConfiguration:
+        Status: Enabled
+      WebsiteConfiguration:
+        ErrorDocument: 404.html
+        IndexDocument: index.html
+          
+  BucketPolicyDataSync:  
+    Type: 'AWS::S3::BucketPolicy'  
+    Properties:  
+      Bucket:  !Ref S3Bucket
+      PolicyDocument:
+        Statement:  
+        -  
+          Sid: "AllowAccesToIAMRole"  
+          Action:  
+            - "s3:GetObject"
+            
+          Effect: "Allow"  
+          Resource:  
+            Fn::Join:  
+              - ""  
+              -  
+                - "arn:aws:s3:::"  
+                -  
+                  Ref: "S3Bucket"  
+                - "/*"  
+          Principal: "*"            
+
+  WWWBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: www.jennasprattler.com 
+      AccessControl: BucketOwnerFullControl
+      WebsiteConfiguration:
+        RedirectAllRequestsTo:
+          HostName: jennasprattler.com
+
+Outputs:
+
+
+  S3BucketName:
+    Value: !Ref S3Bucket
+    Description: S3 Bucket for object storage
+
+
+  S3BucketARN:
+    Value: !GetAtt S3Bucket.Arn
+    Description: S3 bucket ARN
+```
+
 #### Create CloudFront Distribution
 
 #### Create GitHub Action Workflow 
