@@ -5,7 +5,7 @@ _Last updated: July 01, 2021_
 # Overview
 
 ## High-level Overview - Traffic Flow
-<img src="_images/jekyll-web-flow.jpg alt="hi" class="inline"/>
+![jekyll-web-flow](_images\jekyll-web-flow.jpg)
 
 ## High-level Overview - CI/CD Flow
-<img src="_images/jekyll-code-deploy.jpg" alt="hi" class="inline"/>
+![jekyll-code-deploy](_images\jekyll-code-deploy.jpg)
