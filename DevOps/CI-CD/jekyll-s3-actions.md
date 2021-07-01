@@ -47,7 +47,6 @@ I'll be creating DNS Records using Route 53 however, you can use another domain 
 - `BucketPolicy` has `s3:GetObject` action set to allow so that anyone can read the object data and view the website
 - `WebsiteConfiguration` enables the static website capability in S3 
 - `WWWBucket` creates an empty bucket only used to redirect www.FIXME.com traffic to your FIXME.com bucket and is only needed if you don't plan on using CloudFront and decide to just host content from S3 only.
-
 ```scss
 ---
 AWSTemplateFormatVersion: '2010-09-09'
@@ -123,6 +122,7 @@ Outputs:
     Value: !GetAtt S3Bucket.Arn
     Description: S3 bucket ARN
 ```
+
 2. Navigate to the region closest to you and go to the CloudFormation service
 3. Upload your updated CFT stack to create your new S3 buckets for hosting your static website files.
 4. Capture your S3 Endpoint URL - you can find this by navigating to your new S3 Bucket > Properties > Static web site hosting > Endpoint
