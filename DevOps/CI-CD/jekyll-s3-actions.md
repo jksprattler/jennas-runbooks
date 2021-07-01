@@ -8,4 +8,4 @@ _Last updated: July 01, 2021_
 ![jekyll-web-flow](../../_images/jekyll-web-flow.jpg)
 
 ## High-level Overview - CI/CD Flow
-![jekyll-code-deploy](../../_images/jekyll-code-deploy.jpg)
+![jekyll-code-deploy](jekyll-code-deploy.jpg)
