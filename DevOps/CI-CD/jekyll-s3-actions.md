@@ -35,7 +35,10 @@ Our use case for this runbook will be following the build of my personal resume 
 ### Procedure
 #### Create DNS Records
 I'll be creating DNS Records using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined below.
-1. 
+1. Navigate to the AWS Route 53 service and check the availability of your domain name - if available purchase it. At the time of this writing it costs $12 per year for a new domain.
+2. It will take approximately 30 minutes for your new domain to be registered so either take a break here or go ahead and get started with creating the S3 bucket in the next section but come back here to complete setting up your public hosted zone.
+3. Setup your hosted zone by entering your new Domain Name and selecting Public Hosted Zone in the Type dropdown.
+4. 
 
 #### Create S3 Bucket
 
@@ -116,6 +119,12 @@ Outputs:
 ```
 
 #### Create CloudFront Distribution
+
+1. Navigate to the AWS Cloudfront service and select Create distribution > Web > Get started
+2. Under Origin Domain name, paste your S3 endpoint. Leave remainin Origin settings as default.
+3. Under Distribution Settings, Alternate Domain Names (CNAMEs) enter your A records created in the Route 53 public hosted zone section above and enter index.html as Default Root Object, for example:
+4. Select AWS Certificate Manager
+5. Copy your new Cloudfront address, it looks like this: bvtbnxdmn65sio.cloudfront.net
 
 #### Create GitHub Action Workflow 
 
