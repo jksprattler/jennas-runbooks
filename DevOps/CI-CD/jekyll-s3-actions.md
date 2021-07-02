@@ -1,11 +1,12 @@
 # Jekyll Site Hosted on AWS S3 using Github Actions
 
-_Last updated: July 01, 2021_
+_Last updated: July 02, 2021_
 
 ## Overview
 The purpose of this runbook is to define the necessary steps in order to deploy a secure static website hosted on an AWS S3 Bucket served by an AWS CloudFront Distribution (CDN) with automated deployment and updates using a GitHub Actions Workflow.
 
-Our use case for this runbook will be following the build of my personal resume website: [jennasprattler.com](https://jennasprattler.com/) or [www.jennasprattler.com](https://www.jennasprattler.com/)
+Our use case for this runbook will be following the build of my personal resume website: 
+[jennasprattler.com](https://jennasprattler.com/) or [www.jennasprattler.com](https://www.jennasprattler.com/)
 
 ### Pre-requisites
 - Static website
@@ -19,7 +20,7 @@ Our use case for this runbook will be following the build of my personal resume 
 ### High-level Overview - Traffic Flow
 ![jekyll-web-flow](/images/jekyll-web-flow.jpg)
 - Mobile and Desktop broswers are supported by the Jekyll website
-- AWS Route 53 performs DNS resolution for [jennasprattler.com](https://jennasprattler.com/) or [www.jennasprattler.com](https://www.jennasprattler.com/)
+- AWS Route 53 performs DNS resolution for [jennasprattler.com](https://jennasprattler.com/) and [www.jennasprattler.com](https://www.jennasprattler.com/)
 - AWS CloudFront CDN serves up any cached content of your website from one of its Edge Locations closest to you
 - AWS Certificate Manager hosts the SSL Certificate for your website which gets assigned to your CloudFront CDN encrypting all user traffic
 - AWS S3 Bucket hosts all of your website files where the CloudFront CDN retrieves anything that it doesn't have cached on its Edge Location
@@ -131,8 +132,9 @@ Outputs:
 1. Navigate to the AWS Cloudfront service and select Create distribution > Web > Get started
 2. Under Origin Domain name, paste your S3 Endpoint and remove the "https://" from the front of the URL. Leave the remaining Origin settings as default.
 3. Under Distribution Settings > Alternate Domain Names (CNAMEs) enter your new domain and if you plan to create any additional A records to your Route 53 public hosted zone add them here also on a newline.Enter index.html as Default Root Object, for example:
-4. Select AWS Certificate Manager > register SSL cert on your new domain name this can take 30+ minutes to register and must be created in us-east-1 only in order to use on CloudFront.
-5. Copy your new Cloudfront address, it will look like this: FIXME.cloudfront.net
+4.Select option to redirect all http traffic to https
+5. Select AWS Certificate Manager > register SSL cert on your new domain name this can take 30+ minutes to register and must be created in us-east-1 only in order to use on CloudFront.
+6. Copy your new Cloudfront address, it will look like this: FIXME.cloudfront.net
 
 #### Create Route 53 Hosted Zone and DNS Records
 Proceed once your new domain has been registered.
