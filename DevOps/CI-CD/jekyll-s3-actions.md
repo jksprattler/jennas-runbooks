@@ -132,7 +132,7 @@ Outputs:
 1. Navigate to the AWS Cloudfront service and select Create distribution > Web > Get started
 2. Under Origin Domain name, paste your S3 Endpoint and remove the "https://" from the front of the URL. Leave the remaining Origin settings as default.
 3. Under Distribution Settings > Alternate Domain Names (CNAMEs) enter your new domain and if you plan to create any additional A records to your Route 53 public hosted zone add them here also on a newline.Enter index.html as Default Root Object, for example:
-4.Select option to redirect all http traffic to https
+4. Select option to redirect all http traffic to https
 5. Select AWS Certificate Manager > register SSL cert on your new domain name this can take 30+ minutes to register and must be created in us-east-1 only in order to use on CloudFront.
 6. Copy your new Cloudfront address, it will look like this: FIXME.cloudfront.net
 
