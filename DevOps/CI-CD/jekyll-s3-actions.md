@@ -41,12 +41,13 @@ I'll be creating DNS Records using Route 53 however, you can use another domain 
 4. 
 
 #### Create S3 Bucket
-1. Copy the Cloudformation stack YAML code below and replace all FIXME values per your environment.
-- `BucketName` must match your domain name exactly
-- `PublicAccessBlockConfiguration` properties are all set to false in order to allow public access to your website
-- `BucketPolicy` has `s3:GetObject` action set to allow so that anyone can read the object data and view the website
-- `WebsiteConfiguration` enables the static website capability in S3 
-- `WWWBucket` creates an empty bucket only used to redirect www.FIXME.com traffic to your FIXME.com bucket and is only needed if you don't plan on using CloudFront and decide to just host content from S3 only.
+- Copy the Cloudformation stack YAML code below and replace all FIXME values per your environment.
+  - `BucketName` must match your domain name exactly
+  - `PublicAccessBlockConfiguration` properties are all set to false in order to allow public access to your website
+  - `BucketPolicy` has `s3:GetObject` action set to allow so that anyone can read the object data and view the website
+  - `WebsiteConfiguration` enables the static website capability in S3 
+  - `WWWBucket` creates an empty bucket only used to redirect www.FIXME.com traffic to your FIXME.com bucket and is only needed if you don't plan on using CloudFront and decide to just host content from S3 only.
+
 ```scss
 ---
 AWSTemplateFormatVersion: '2010-09-09'
@@ -123,9 +124,9 @@ Outputs:
     Description: S3 bucket ARN
 ```
 
-2. Navigate to the region closest to you and go to the CloudFormation service
-3. Upload your updated CFT stack to create your new S3 buckets for hosting your static website files.
-4. Capture your S3 Endpoint URL - you can find this by navigating to your new S3 Bucket > Properties > Static web site hosting > Endpoint
+1. Navigate to the region closest to you and go to the CloudFormation service
+2. Upload your updated CFT stack to create your new S3 buckets for hosting your static website files.
+3. Capture your S3 Endpoint URL - you can find this by navigating to your new S3 Bucket > Properties > Static web site hosting > Endpoint
 
 #### Create CloudFront Distribution
 
@@ -136,6 +137,7 @@ Outputs:
 5. Copy your new Cloudfront address, it will look like this: FIXME.cloudfront.net
 
 #### Create IAM Policy and IAM User for Github Actions
+##### IAM Policy
 1. Navigate to IAM and [create a new IAM Policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-console.html#access_policies_create-json-editor) using the JSON editor.
 2. Paste the following policy contents into the JSON editor and update all "FIXME" values for your bucket name, AWS account ID and CloudFront ID which is the alphanumeric 14 characters of your associated Cloudfront distribution:
 
@@ -163,9 +165,9 @@ Outputs:
         ]
     }
 ```
-
-3. Create a new IAM User with programmatic access and attach the IAM Policy you just created above.
-4. Copy the AWS access key ID and Secret access key to a safe location such as secrets manager or key vault, as they'll be used in the GitHub Action Workflow setup below.
+##### IAM User
+1. Create a new IAM User with programmatic access and attach the IAM Policy you just created above.
+2. Copy the AWS access key ID and Secret access key to a safe location such as secrets manager or key vault, as they'll be used in the GitHub Action Workflow setup below.
 
 #### Create GitHub Action Workflow 
 
@@ -221,9 +223,9 @@ jobs:
     - name: "Create AWS Cloudfront Invalidation"
       run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
 ```
-
-3. Navigate to Your Repo > Settings > Secrets > Actions
-4. Configure The GitHub Action Secrets for the following:
+#### Create GitHub Action Secrets
+1. Navigate to Your Repo > Settings > Secrets > Actions
+2. Configure The GitHub Action Secrets for the following:
 - `AWS_ACCESS_KEY_ID` - The AWS access key ID associated with the programmatic IAM User created previously.
 - `AWS_SECRET_ACCESS_KEY` - The AWS secret key ID associated with the programmatic IAM User created previously.
 - `AWS_S3_BUCKET_NAME` - Your AWS bucket name hosting your website, for example: jennasprattler.com
