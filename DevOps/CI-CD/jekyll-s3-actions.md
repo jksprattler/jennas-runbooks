@@ -34,7 +34,7 @@ Our use case for this runbook will be following the build of my personal resume 
 
 ### Procedure
 #### Create Route 53 Domain
-I'll be creating my domain using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined below. 
+I'll be creating my domain using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined below.
 1. Navigate to the AWS Route 53 service and check the availability of your domain name - if available purchase it. At the time of this writing it costs $12 per year for a new domain.
 2. It will take approximately 30 minutes for your new domain to be registered so proceed with the next section to create the S3 bucket and we'll create DNS records for our new site in a later step.
 
@@ -139,7 +139,9 @@ Proceed once your new domain has been registered.
 1. Navigate to the Route 53 service and select 
 2. Setup your hosted zone by entering your new Domain Name and selecting Public Hosted Zone in the Type dropdown.
 3. Create
+
 #### Create IAM Policy and IAM User for Github Actions
+
 ##### IAM Policy
 1. Navigate to IAM and [create a new IAM Policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-console.html#access_policies_create-json-editor) using the JSON editor.
 2. Paste the following policy contents into the JSON editor and update all "FIXME" values for your bucket name, AWS account ID and CloudFront ID which is the alphanumeric 14 characters of your associated Cloudfront distribution:
