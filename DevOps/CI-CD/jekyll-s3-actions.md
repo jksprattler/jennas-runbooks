@@ -5,8 +5,8 @@ _Last updated: July 02, 2021_
 ## Overview
 The purpose of this runbook is to define the steps needed to deploy a secure static website hosted on an AWS S3 Bucket served by an AWS CloudFront Distribution (CDN) with automated deployment of updates using a GitHub Actions Workflow.
 
-Our use case for this runbook will be following the build of my personal resume website: 
-- [jennasprattler.com](https://jennasprattler.com/) | [www.jennasprattler.com](https://www.jennasprattler.com/)
+Our use case for this runbook will be following the build of my personal resume website: [jennasprattler.com](https://jennasprattler.com/) |
+[www.jennasprattler.com](https://www.jennasprattler.com/)
 
 ### Pre-requisites
 - Static website
