@@ -33,12 +33,10 @@ Our use case for this runbook will be following the build of my personal resume 
 - CloudFront invalidation is run in order to clear out any cached content and immediately serve up the new/updated S3 website content
 
 ### Procedure
-#### Create DNS Records
-I'll be creating DNS Records using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined below.
+#### Create Route 53 Domain
+I'll be creating my domain using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined below. 
 1. Navigate to the AWS Route 53 service and check the availability of your domain name - if available purchase it. At the time of this writing it costs $12 per year for a new domain.
-2. It will take approximately 30 minutes for your new domain to be registered so either take a break here or go ahead and get started with creating the S3 bucket in the next section. Come back here to complete setting up your public hosted zone.
-3. Setup your hosted zone by entering your new Domain Name and selecting Public Hosted Zone in the Type dropdown.
-4. 
+2. It will take approximately 30 minutes for your new domain to be registered so proceed with the next section to create the S3 bucket and we'll create DNS records for our new site in a later step.
 
 #### Create S3 Bucket
 - Copy the Cloudformation stack YAML code below and replace all FIXME values per your environment.
@@ -136,6 +134,11 @@ Outputs:
 4. Select AWS Certificate Manager > register SSL cert on your new domain name this can take 30+ minutes to register and must be created in us-east-1 only in order to use on CloudFront.
 5. Copy your new Cloudfront address, it will look like this: FIXME.cloudfront.net
 
+#### Create Route 53 Hosted Zone and DNS Records
+Proceed once your new domain has been registered.
+1. Navigate to the Route 53 service and select 
+2. Setup your hosted zone by entering your new Domain Name and selecting Public Hosted Zone in the Type dropdown.
+3. Create
 #### Create IAM Policy and IAM User for Github Actions
 ##### IAM Policy
 1. Navigate to IAM and [create a new IAM Policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-console.html#access_policies_create-json-editor) using the JSON editor.
