@@ -17,6 +17,9 @@ plugins:
   - jekyll-mentions
   - jekyll-target-blank
 
+gems:
+  - jekyll-target-blank  
+
 exclude:
   - Makefile
   - CNAME
