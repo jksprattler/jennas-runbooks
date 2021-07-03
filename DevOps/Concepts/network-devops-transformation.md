@@ -23,5 +23,7 @@ I've removed any employer branding and company specific details. What you'll fin
 - Slide deck: [Network DevOps Transformation pdf presentation](https://github.com/jksprattler/devops-concepts/blob/main/network-devops-transformation.pdf)
 
 ---
+
 I hope you've found this presentation helpful as you move along in your DevOps journey. As I've learned in my research and experience, every DevOps transformation is going to look different - there is no one size fits all approach and not everyone will agree on everything. Although we may not always agree, the main goal is arriving at that self-organizing system of collaboration where all members of the team feel valued and respected. 
+
 ---
