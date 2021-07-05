@@ -2,6 +2,8 @@
 
 _Last updated: July 03, 2021_
 
+![what-is-devops](/images/what-is-devops.jpeg)
+
 ## Purpose
 I gave a presentation on DevOps terminology, roles and strategy to a group of leaders in the networking group of my employer. The purpose of the presentation was to engage in open dialogue and support facilitating the path to a successful DevOps transformation for our network teams. 
 
