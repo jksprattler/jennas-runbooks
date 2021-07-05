@@ -1,6 +1,6 @@
 # Jekyll Site Hosted on AWS S3 Using Github Actions
 
-_Last updated: July 02, 2021_
+_Last updated: July 05, 2021_
 
 ## Overview
 The purpose of this runbook is to define the steps needed to deploy a secure static website hosted on an AWS S3 Bucket served by an AWS CloudFront Distribution (CDN) with automated deployment of updates using a GitHub Actions Workflow.
@@ -31,24 +31,24 @@ Our use case for this runbook will be following the build of my personal resume 
 - GitHub hosts the repo for the Jekyll website files
 - GitHub Actions kickoff the CI/CD Workflow whenever a push is made to the main branch
 - CI/CD Workflow uploads the output files from the Jekyll `_site` directory to the AWS S3 bucket
-- CloudFront invalidation is run in order to clear out any cached content and immediately serve up the new/updated S3 website content
+- CloudFront invalidation is run in order to clear out any cached content and immediately serve the updated S3 website content
 
 ### Procedure
 #### Create Route 53 Domain
-I'll be creating my domain using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined in this runbook.
+- I'll be creating my domain using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined in this runbook.
 1. Navigate to the AWS Route 53 service and check the availability of your domain name - if available purchase it. At the time of this writing it cost me $12 per year for my new .com domain.
 ![aws-route53-resume](/images/aws-route53-resume.png)
 2. Your new domain should now show a status of "Domain registration in progress." It will take approximately 30 minutes for your new domain to be registered. 
 ![aws-route53-resume-pending-requests](/images/aws-route53-resume-pending-requests.png)
-3. Proceed with the next section to create the S3 bucket and we'll create DNS records for our new site in a later step.
+3. Proceed with the next section to create the S3 bucket. We'll create DNS records for our new site in a later section.
 
 #### Create S3 Bucket
 - Copy the Cloudformation stack YAML code below and replace all FIXME values per your environment.
   - `BucketName` must match your domain name exactly
   - `PublicAccessBlockConfiguration` properties are all set to false in order to allow public access to your website
   - `BucketPolicy` has `s3:GetObject` action set to allow so that anyone can read the object data and view the website
-  - `WebsiteConfiguration` enables the static website capability in S3 
-  - `WWWBucket` creates an empty bucket only used to redirect www.FIXME.com traffic to your FIXME.com bucket and is only needed if you decide to not use a CloudFront CDN and just host unencrypted content from S3 only which is what I did initially.
+  - `WebsiteConfiguration` enables the static website capability in S3
+  - `WWWBucket` creates an empty bucket only used to redirect www.FIXME.com traffic to your FIXME.com bucket; only needed if you decide to not use a CloudFront CDN and just host unencrypted content from S3 only (which is what I did initially)
 
 ```scss
 ---
@@ -126,47 +126,45 @@ Outputs:
     Description: S3 bucket ARN
 ```
 
-1. Navigate to the region closest to you and go to the CloudFormation service
-2. Upload your updated CFT stack to create your new S3 buckets for hosting your static website files.
+1. Navigate to the region closest to you and go to the CloudFormation service.
+2. Upload your updated CFT stack to create your new S3 buckets for hosting your static website files and monitor the event progress.
 ![aws-cft-s3-resume3](/images/aws-cft-s3-resume3.png)
-3. Once created, your bucket permissions and policy should look similar to this:
+3. Once created, your S3 bucket permissions and policy should look similar to this:
 ![aws-cft-s3-resume-bucket-policy](/images/aws-cft-s3-resume-bucket-policy.png)
-4. Capture your S3 Endpoint URL - you can find this by navigating to your new S3 Bucket > Properties > Static web site hosting > Endpoint
+4. Capture your S3 Endpoint URL - you can find this by navigating to your new S3 Bucket > Properties > Static web site hosting > Endpoint. We'll need this for the CloudFront section.
 
 #### Create Route 53 Hosted Zone and DNS Records
 
-Proceed once the domain registration has completed
-1. Navigate to the Route 53 service and you should now see your new domain has moved from Pending requests to Registered domains.
-2. Create a new Hosted zone for your new domain by entering your new Domain Name and selecting Public Hosted Zone in the Type dropdown.
+- Proceed once the Domain registration has completed
+1. Navigate to the Route 53 service where you should see your new domain has moved from Pending requests to Registered domains.
+2. Create a Hosted zone for your new domain by entering your Domain Name and selecting Public Hosted Zone in the Type dropdown.
 3. The NS and SOA records for your new domain will auto-create for you. 
-4. Proceed to the next section to create your new CloudFront distribution as you'll need to point your new A records to the new Cloudfront domain names for your website. You can also go through the ACM certificate process to automatically validate your new domain which will automatically create a new CNAME record for your new hosted zone. Once that's completed, return here to step 5.
-5. In your new public hosted zone, you should now see a a new CNAME record created pointing to your ACM Certificate in addition to the NS and SOA records.
-6. Create 2 new A records, one for your root domain and the other for any other domains you have pointing to your root domain (ie www.FIXME.com). Each A record should point to your new CloudFront Domain Name created in the Create ClouFront Distribution section.
+4. Proceed to the next section to create your new CloudFront distribution as you'll need to point your new A records to the new Cloudfront Domain Name for your website. You can also go through the ACM certificate process to automatically validate your new domain which will automatically create a new CNAME record for you in your hosted zone. Once that's completed, return here to step 5.
+5. In your new public hosted zone, you should now see a CNAME record pointing to your ACM Certificate in addition to the NS and SOA records.
+6. Create 2 new A records, one for your root domain and the other for any sub-domains you want pointed to your root domain (ie www.FIXME.com). Each A record should point to your new CloudFront Domain Name created in the Create ClouFront Distribution section.
 ![aws-route53-cloudfront-records](/images/aws-route53-cloudfront-records.png)
 
 #### Create CloudFront Distribution
 
 1. Navigate to the AWS Cloudfront service and select Create distribution > Web > Get started
-2. Under Origin Domain name, paste your S3 Endpoint and remove the "http://" from the front of the URL. Under Default Cache Behavior Settings ? Viewer Protocol Policy select "Redirect HTTP to HTTPS". Leave the remaining Origin settings as default.
+2. Under Origin Domain name, paste your S3 Endpoint and remove the prefix, "http://" from the URL. Under Default Cache Behavior Settings > Viewer Protocol Policy select "Redirect HTTP to HTTPS". Leave the remaining Origin settings as default.
 ![aws-cloudfront-resume1](/images/aws-cloudfront-resume1.png)
 3. Under Distribution Settings > Alternate Domain Names (CNAMEs): 
-- Enter your new domain and if you plan to create any additional A records to your Route 53 public hosted zone add them here also on a newline (for example www.FIXME.com). 
+- Enter your new domain and any other subdomains (ie www.FIXME.com) you plan to use each on a newline. 
 - Select "Custom SSL Certificate" in order to secure your website usinge a stored in Amazon Certificate Manager (ACM) in the US East (N. Virginia) Region. Select the "Request or Import a Certificate with ACM button" which will take you through the process of validating your domain. I went through the [DNS validation process](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html) since my domain was registered using Route 53.
 ```tip
-Your Route 53 domain must have completed registration before you can request to validate it with a new ACM cert
-It can take 30+ minutes for your SSL cert to be validated, meanwhile you can move onto the IAM policy/user creation steps below.
-Don't forget to request your ACM cert from us-east-1 which is the only region supported by Cloudfront!
+Your Route 53 domain must have completed registration before you can request to validate it with a new ACM cert. It can take 30+ minutes for your SSL cert to be validated, meanwhile you can move onto the IAM policy/user creation steps below. Don't forget to request your ACM cert from us-east-1 which is the only region supported by Cloudfront!
 ```
 ![aws-cloudfront-acm-cert1](/images/aws-cloudfront-acm-cert1.png)
 ![aws-cloudfront--acm-pub-certificate](/images/aws-cloudfront--acm-pub-certificate.png)
-- Enter index.html as Default Root Object.
-4. Once your new CDN has been created, copy your new 14 character alphanumeric Cloudfront ID and Domain Name (FIXME.cloudfront.net). We'll need these values for the next steps.
+- For the Default Root Object, enter: index.html
+4. Once your new CDN has been created, copy the 14 character alphanumeric Cloudfront ID and Domain Name (ie FIXME.cloudfront.net).
 
 #### Create IAM Policy and IAM User for Github Actions
 
 ##### IAM Policy
 1. Navigate to IAM and [create a new IAM Policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create-console.html#access_policies_create-json-editor) using the JSON editor.
-2. Paste the following policy contents into the JSON editor and update all "FIXME" values for your bucket name, AWS account ID and CloudFront ID which is the alphanumeric 14 characters of your associated Cloudfront distribution:
+2. Paste the following policy contents into the JSON editor and update all "FIXME" values for your bucket name, AWS account ID and CloudFront ID:
 
 ```scss
     {
@@ -194,11 +192,11 @@ Don't forget to request your ACM cert from us-east-1 which is the only region su
 ```
 ##### IAM User
 1. Create a new IAM User with programmatic access and attach the IAM Policy you just created above.
-2. Copy the AWS access key ID and Secret access key to a safe location such as secrets manager or key vault, as they'll be used in the GitHub Action Workflow setup below.
+2. Copy the AWS access key ID and Secret access key for your user to a safe location such as secrets manager or key vault, as these will be used in the GitHub Action Workflow setup below.
 
 #### Create GitHub Action Workflow 
 
-1. From within your GitHub repo navigate to .github/workflows/ and create a new file called `build-and-deploy.yml`
+1. From within your GitHub repo navigate to: .github/workflows/ and create a new file called `build-and-deploy.yml`
 2. Copy and paste the following into your newly created GitHub Action workflow and update the FIXME value for the region that your S3 bucked was deployed in.
 
 ```scss
@@ -253,11 +251,16 @@ jobs:
 #### Create GitHub Action Secrets
 1. Navigate to Your Repo > Settings > Secrets > Actions
 2. Configure The GitHub Action Secrets for the following:
-- `AWS_ACCESS_KEY_ID` - The AWS access key ID associated with the programmatic IAM User created previously.
-- `AWS_SECRET_ACCESS_KEY` - The AWS secret key ID associated with the programmatic IAM User created previously.
-- `AWS_S3_BUCKET_NAME` - Your AWS bucket name hosting your website, for example: jennasprattler.com
-- `AWS_CLOUDFRONT_DISTRIBUTION_ID` - The alphanumeric 14 characters of your associated Cloudfront distribution fronting your S3 bucket's website.
-- `JEKYLL_PAT` - Setup a GitHub token that can be used by the workflow in order to build the Jekyll _site pages 
+- `AWS_ACCESS_KEY_ID` - The AWS access key ID associated with the programmatic IAM User.
+- `AWS_SECRET_ACCESS_KEY` - The AWS secret key ID associated with the programmatic IAM User.
+- `AWS_S3_BUCKET_NAME` - Your AWS bucket name hosting your website, for example: jennasprattler.com or FIXME.com
+- `AWS_CLOUDFRONT_DISTRIBUTION_ID` - The 14 character alphanumeric Cloudfront distribution ID fronting your S3 bucket's website.
+- `JEKYLL_PAT` - Setup a GitHub token that can be used by the workflow in order to build the Jekyll _site pages.
 
 #### Deploy your Jekyll website using GitHub Actions
-1. 
+- Make a change to your Jekyll site > commit > push the changes to main.
+- Navigate to Your Repo > Settings > Secrets > Actions and under the CI / CD Workflow select the latest running build to monitor the progress:
+![github-actions-jekyll](/images/github-actions-jekyll.png)
+- Once the Workflow has completed, browse to your website in a new tab or refresh any open tabs to see the updated content.
+
+You now have a functioning, secure, serverless, static website configured for automatic updates upon code commit to your repository.
