@@ -37,7 +37,10 @@ Our use case for this runbook will be following the build of my personal resume 
 #### Create Route 53 Domain
 I'll be creating my domain using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined in this runbook.
 1. Navigate to the AWS Route 53 service and check the availability of your domain name - if available purchase it. At the time of this writing it cost me $12 per year for my new .com domain.
-2. It will take approximately 30 minutes for your new domain to be registered. Proceed with the next section to create the S3 bucket and we'll create DNS records for our new site in a later step.
+![aws-route53-resume](/images/aws-route53-resume.png)
+2. Your new domain should now show a status of "Domain registration in progress." It will take approximately 30 minutes for your new domain to be registered. 
+![aws-route53-resume-pending-requests](/images/aws-route53-resume-pending-requests.png)
+3. Proceed with the next section to create the S3 bucket and we'll create DNS records for our new site in a later step.
 
 #### Create S3 Bucket
 - Copy the Cloudformation stack YAML code below and replace all FIXME values per your environment.
@@ -125,22 +128,39 @@ Outputs:
 
 1. Navigate to the region closest to you and go to the CloudFormation service
 2. Upload your updated CFT stack to create your new S3 buckets for hosting your static website files.
-3. Capture your S3 Endpoint URL - you can find this by navigating to your new S3 Bucket > Properties > Static web site hosting > Endpoint
+![aws-cft-s3-resume3](/images/aws-cft-s3-resume3.png)
+3. Once created, your bucket permissions and policy should look similar to this:
+![aws-cft-s3-resume-bucket-policy](/images/aws-cft-s3-resume-bucket-policy.png)
+4. Capture your S3 Endpoint URL - you can find this by navigating to your new S3 Bucket > Properties > Static web site hosting > Endpoint
+
+#### Create Route 53 Hosted Zone and DNS Records
+
+Proceed once the domain registration has completed
+1. Navigate to the Route 53 service and you should now see your new domain has moved from Pending requests to Registered domains.
+2. Create a new Hosted zone for your new domain by entering your new Domain Name and selecting Public Hosted Zone in the Type dropdown.
+3. The NS and SOA records for your new domain will auto-create for you. 
+4. Proceed to the next section to create your new CloudFront distribution as you'll need to point your new A records to the new Cloudfront domain names for your website. You can also go through the ACM certificate process to automatically validate your new domain which will automatically create a new CNAME record for your new hosted zone. Once that's completed, return here to step 5.
+5. In your new public hosted zone, you should now see a a new CNAME record created pointing to your ACM Certificate in addition to the NS and SOA records.
+6. Create 2 new A records, one for your root domain and the other for any other domains you have pointing to your root domain (ie www.FIXME.com). Each A record should point to your new CloudFront Domain Name created in the Create ClouFront Distribution section.
+![aws-route53-cloudfront-records](/images/aws-route53-cloudfront-records.png)
 
 #### Create CloudFront Distribution
 
 1. Navigate to the AWS Cloudfront service and select Create distribution > Web > Get started
-2. Under Origin Domain name, paste your S3 Endpoint and remove the "https://" from the front of the URL. Leave the remaining Origin settings as default.
-3. Under Distribution Settings > Alternate Domain Names (CNAMEs) enter your new domain and if you plan to create any additional A records to your Route 53 public hosted zone add them here also on a newline.Enter index.html as Default Root Object, for example:
-4. Select option to redirect all http traffic to https
-5. Select AWS Certificate Manager > register SSL cert on your new domain name this can take 30+ minutes to register and must be created in us-east-1 only in order to use on CloudFront.
-6. Copy your new Cloudfront address, it will look like this: FIXME.cloudfront.net
-
-#### Create Route 53 Hosted Zone and DNS Records
-Proceed once your new domain has been registered.
-1. Navigate to the Route 53 service and select  
-2. Setup your hosted zone by entering your new Domain Name and selecting Public Hosted Zone in the Type dropdown.
-3. Create
+2. Under Origin Domain name, paste your S3 Endpoint and remove the "http://" from the front of the URL. Under Default Cache Behavior Settings ? Viewer Protocol Policy select "Redirect HTTP to HTTPS". Leave the remaining Origin settings as default.
+![aws-cloudfront-resume1](/images/aws-cloudfront-resume1.png)
+3. Under Distribution Settings > Alternate Domain Names (CNAMEs): 
+- Enter your new domain and if you plan to create any additional A records to your Route 53 public hosted zone add them here also on a newline (for example www.FIXME.com). 
+- Select "Custom SSL Certificate" in order to secure your website usinge a stored in Amazon Certificate Manager (ACM) in the US East (N. Virginia) Region. Select the "Request or Import a Certificate with ACM button" which will take you through the process of validating your domain. I went through the [DNS validation process](https://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html) since my domain was registered using Route 53.
+```tip
+Your Route 53 domain must have completed registration before you can request to validate it with a new ACM cert
+It can take 30+ minutes for your SSL cert to be validated, meanwhile you can move onto the IAM policy/user creation steps below.
+Don't forget to request your ACM cert from us-east-1 which is the only region supported by Cloudfront!
+```
+![aws-cloudfront-acm-cert1](/images/aws-cloudfront-acm-cert1.png)
+![aws-cloudfront--acm-pub-certificate](/images/aws-cloudfront--acm-pub-certificate.png)
+- Enter index.html as Default Root Object.
+4. Once your new CDN has been created, copy your new 14 character alphanumeric Cloudfront ID and Domain Name (FIXME.cloudfront.net). We'll need these values for the next steps.
 
 #### Create IAM Policy and IAM User for Github Actions
 
