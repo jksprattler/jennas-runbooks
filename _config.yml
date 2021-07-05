@@ -16,6 +16,9 @@ plugins:
   - jekyll-avatar
   - jekyll-mentions
 
+gems:
+  - jekyll-target-blank  
+
 exclude:
   - Makefile
   - CNAME
