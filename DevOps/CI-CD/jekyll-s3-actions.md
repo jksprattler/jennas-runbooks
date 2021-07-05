@@ -1,4 +1,4 @@
-# Jekyll Site Hosted on AWS S3 Using Github Actions
+# Jekyll Site Hosted on AWS S3 Using GitHub Actions
 
 _Last updated: July 05, 2021_
 
