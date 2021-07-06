@@ -259,7 +259,7 @@ jobs:
 
 #### Deploy your Jekyll website using GitHub Actions
 - Make a change to your Jekyll site > commit > push the changes to main.
-- Navigate to Your Repo > Settings > Secrets > Actions and under the CI / CD Workflow select the latest running build to monitor the progress:
+- Navigate to Your Repo > Actions and under the CI / CD Workflow select the latest running build to monitor the progress:
 ![github-actions-jekyll](/images/github-actions-jekyll.png)
 - Once the Workflow has completed, browse to your website in a new tab or refresh any open tabs to see the updated content.
 
