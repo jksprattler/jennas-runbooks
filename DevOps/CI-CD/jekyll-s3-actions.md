@@ -36,6 +36,7 @@ Our use case for this runbook will be following the build of my personal resume 
 ### Procedure
 #### Create Route 53 Domain
 - I'll be creating my domain using Route 53 however, you can use another domain provider if you like just note that you'll need to follow a slightly different procedure then what I've defined in this runbook.
+
 1. Navigate to the AWS Route 53 service and check the availability of your domain name - if available purchase it. At the time of this writing it cost me $12 per year for my new .com domain.
 ![aws-route53-resume](/images/aws-route53-resume.png)
 2. Your new domain should now show a status of "Domain registration in progress." It will take approximately 30 minutes for your new domain to be registered. 
