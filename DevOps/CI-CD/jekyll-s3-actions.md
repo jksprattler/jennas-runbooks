@@ -137,6 +137,7 @@ Outputs:
 #### Create Route 53 Hosted Zone and DNS Records
 
 - Proceed once the Domain registration has completed
+
 1. Navigate to the Route 53 service where you should see your new domain has moved from Pending requests to Registered domains.
 2. Create a Hosted zone for your new domain by entering your Domain Name and selecting Public Hosted Zone in the Type dropdown.
 3. The NS and SOA records for your new domain will auto-create for you. 
