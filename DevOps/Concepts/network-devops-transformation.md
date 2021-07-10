@@ -1,6 +1,6 @@
 # Network DevOps Transformation
 
-_Last updated: July 05, 2021_
+_Last updated: July 10, 2021_
 
 ![what-is-devops](/images/what-is-devops.jpeg)
 
