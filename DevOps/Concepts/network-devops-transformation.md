@@ -19,7 +19,7 @@ I've done a mock-up of the "Network DevOps Transformation" presentation as the f
 
 I've removed any employer branding and company specific details from the presentation. What you'll find in the youtube recording and slide deck links below are the core contents of the presentation that I gave originally. This is all publicly available information based on my research and personal DevOps experience over the past couple of years.
 
-- YouTube recording: [Network DevOps Transformation]()
+- YouTube recording: [Network DevOps Transformation](https://youtu.be/Rr8Z_OUdNVI)
 - Slide deck: [Network DevOps Transformation pdf presentation](https://github.com/jksprattler/devops-concepts/blob/main/network-devops-transformation.pdf)
 
 ### Final Thoughts
