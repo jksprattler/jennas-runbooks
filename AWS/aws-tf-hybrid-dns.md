@@ -63,6 +63,11 @@ onpremdnsb_ip = "192.168.10.236"
 onpremvpc_id = "vpc-0ab74c12320891aa3"
 ```
 4. Navigate to the `/us-east-1` directory and run terraform plan/apply:
+```scss
+cd ../us-east-1
+terraform plan
+terraform apply
+```
 Resources deployed in this terraform module:
 - `ec2.tf` - micros4l-awsec2a/b AWS instances
 - `route53.tf` - aws.microgreens4life.org Route 53 private zone, web.aws.microgreens4life.org A record, Route 53 Inbound endpoint, Route 53 Outbound endpoint for the corp.microgreens4life.org domain with a Forwarding rule pointing to the Corp on prem environment (us-east-2)
