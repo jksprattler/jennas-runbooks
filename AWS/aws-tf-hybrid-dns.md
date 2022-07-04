@@ -3,7 +3,7 @@
 _Last updated: July 03, 2022_
 
 ## Overview
-The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between 2 separate AWS regions. The intent of this design is to simulate private DNS resolution over an established inter-region AWS VPC Peering connection in addition to various Route 53 and Bind DNS server components detailed below.
+The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on prem private corporate data center. The intent of this design is to simulate this architecture while the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection in addition to various Route 53 and Bind DNS server components as detailed below.
 
 ### Pre-requisites
 
@@ -15,10 +15,14 @@ The purpose of this runbook is to demonstrate the implementation of an AWS Hybri
 ### Design Artifacts
 
 - YouTube demo recording: [FIXME](FIXME)
-- Simulated AWS Hybrid DNS Network Design Architecture: []()
-- Actual AWS Hybrid DNS Network Design Architecture: []()
+- Simulated AWS Hybrid DNS Network Design Architecture: [FIXME](FIXME)
+- Actual AWS Hybrid DNS Network Design Architecture: [FIXME](FIXME)
 - Clone/Fork the repo containing the terraform artifacts for the AWS Hybrid DNS design here: [jksprattler/aws-networking](https://github.com/jksprattler/aws-networking.git)
   - relevant files are under `/aws-terraform-hybrid-dns`
+
+### Simulated design diagram
+
+### Actual design diagram
 
 ### Architecture
 The us-east-1 region will be hosting the `micros4l-aws` VPC with a prefix of 10.10.0.0/16 containing 2 private subnets. Two basic t2.micro EC2 instances, `micros4l-awsec2b/b` will be deployed here for testing DNS resolution into our simulated Corporate on-prem datacenter (which actually lives in us-east-2). Each instance is deployed in a separate subnet/availability zone.
@@ -39,7 +43,7 @@ terraform plan
 terraform apply
 ```
 Resources deployed in this terraform module:
-- `roles.tf` - IAM instance policy, roles and policy attachments which all deployed EC2 instances in this design will utilize
+- `roles.tf` - IAM instance policy, roles and policy attachments which all EC2 instances in this design will utilize
 - `s3.tf` - S3 bucket for storing the terraform state files. Update your bucket name here as it must be globally unique
 2. Navigate to the `/us-east-2` directory and run terraform plan/apply:
 ```scss
@@ -48,7 +52,7 @@ terraform plan
 terraform apply
 ```
 Resources deployed in this terraform module:
-- `ec2.tf` -  micros4l-onpremdnsa/b simulating on prem Linux Bind/DNS servers, micros4l-onpremapp Linux server, 
+- `ec2.tf` -  micros4l-onpremdnsa/b simulating on prem Linux Bind/DNS servers and micros4l-onpremapp Linux server
 - `vpc.tf` - VPC with prefix 192.168.10.0/24, 2x private subnets, private route table associated with the 2x subnets, Security Group and rules allowing SSM access and DNS requests, VPC Endpoints for SSM connectivity
 3. Capture the outputs from the `/us-east-2` module deployment and save them in a temp text file for use as input in the next step. For example:
 ```scss
@@ -79,7 +83,7 @@ sh-4.2$ dig web.aws.microgreens4life.org @127.0.0.1 +short
 10.10.10.31
 ```
 From the AWS console, navigate to the Route 53 service in the us-east-1 region and validate the A record hosted in your private Route 53 zone is using the same IP addresses that your dns server in us-east-2 just resolved to.
-8. Navigate to the EC2 instances in us-east-2 and select `micros4l-onpremapp` and initiate a connection to it via Session Manager. Enter `sudo -i` and with your editor of choice, vi or nano into the `/etc/sysconfig/network-scripts/ifcfg-eth0` file. Scroll to the end of the file and paste the following contents replacing the `THE_PRIVATE_IP_OF_ONPREM_DNS_A/B` values with the actual private IP addresses of the onprem DNS servers which were given in the outputs of your terraform apply for us-east-2 implementation in step 3.):
+8. Navigate to the EC2 instances in us-east-2 and select `micros4l-onpremapp` and initiate a connection to it via Session Manager. Enter `sudo -i` and with your editor of choice, vi or nano into the `/etc/sysconfig/network-scripts/ifcfg-eth0` file. Scroll to the end of the file and paste the following contents replacing the `THE_PRIVATE_IP_OF_ONPREM_DNS_A/B` values with the actual private IP addresses of the onprem DNS servers which were given in the outputs of your terraform apply for the us-east-2 implementation in step 3.):
 ```scss
 DNS1=THE_PRIVATE_IP_OF_ONPREM_DNS_A
 DNS2=THE_PRIVATE_IP_OF_ONPREM_DNS_B
