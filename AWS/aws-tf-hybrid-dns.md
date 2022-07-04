@@ -33,67 +33,67 @@ All instances will be deployed with settings configured to allow Systems Manager
 
 #### Deploy the us-east-2 resources
 1. Navigate to the `/global/iam` directory and run terraform plan/apply:
-
 ```scss
 cd aws-terraform-hybrid-dns/global/iam
 terraform plan
 terraform apply
 ```
-
 Resources deployed in this terraform module:
 - `roles.tf` - IAM instance policy, roles and policy attachments which all deployed EC2 instances in this design will utilize
 - `s3.tf` - S3 bucket for storing the terraform state files. Update your bucket name here as it must be globally unique
-
 2. Navigate to the `/us-east-2` directory and run terraform plan/apply:
-
 ```scss
 cd aws-terraform-hybrid-dns/us-east-2
 terraform plan
 terraform apply
 ```
-
 Resources deployed in this terraform module:
 - `ec2.tf` -  micros4l-onpremdnsa/b simulating on prem Linux Bind/DNS servers, micros4l-onpremapp Linux server, 
 - `vpc.tf` - VPC with prefix 192.168.10.0/24, 2x private subnets, private route table associated with the 2x subnets, Security Group and rules allowing SSM access and DNS requests, VPC Endpoints for SSM connectivity
-
 3. Capture the outputs from the `/us-east-2` module deployment and save them in a temp text file for use as input in the next step. For example:
-
 ```scss
 onprem-private-rt_id = "rtb-0fae5266503453da8"
 onpremdnsa_ip = "192.168.10.11"
 onpremdnsb_ip = "192.168.10.236"
 onpremvpc_id = "vpc-0ab74c12320891aa3"
 ```
-
 4. Navigate to the `/us-east-1` directory and run terraform plan/apply:
-
 Resources deployed in this terraform module:
 - `ec2.tf` - micros4l-awsec2a/b AWS instances
 - `route53.tf` - aws.microgreens4life.org Route 53 private zone, web.aws.microgreens4life.org A record, Route 53 Inbound endpoint, Route 53 Outbound endpoint for the corp.microgreens4life.org domain with a Forwarding rule pointing to the Corp on prem environment (us-east-2)
 - `vpc.tf` - VPC with prefix 10.10.0.0/16, 2x private subnets, private route table associated with the 2x subnets, VPC Peering connectivity between the AWS us-east-1 region to the "on prem" us-east-2 region, Security Group and rules allowing SSM access and DNS requests, VPC Endpoints for SSM connectivity 
-
 5. Capture the outputs from the `/us-east-1` module deployment and save them in a temp text file for use as input in the next step. Note you'll only need the "ip" address output from each of the 2 endpoints. For example:
-
 ```scss
 FIXME
 ```
-
 6. In the [awszone.forward](https://github.com/jksprattler/aws-networking/blob/main/aws-terraform-hybrid-dns/us-east-2/awszone.forward) file, replace the INBOUND_ENDPOINT_IP1 and INBOUND_ENDPOINT_IP2 values of the forwarders with the Endpoint IP addresses from the outputs of the previous step.
-
 7. From the AWS console, navigate to the EC2 instances in the us-east-2 region, select `micros4l-onpremdnsa` and initiate a connection to it via Session Manager. Enter `sudo -i` and with your editor of choice, vi or nano into the `/etc/named.conf` file. Scroll to the end of the file and paste the contents of your updated [awszone.forward](https://github.com/jksprattler/aws-networking/blob/main/aws-terraform-hybrid-dns/us-east-2/awszone.forward) file, save and exit. Run the following command to restart bind service:
-
 ```scss
 systemctl restart named 
 systemctl status named 
 ```
-
 Using dig or nslookup, test that your local DNS server is resolving the AWS Route 53 private zone for aws.microgreens4life.org now that you've applied the Route 53 endpoint IP addresses into the Bind server's named.conf file. You should see it resolve to the 10.10.x.x private IP space of the us-east-1 AWS VPC where the Route 53 inbound endpoints are hosted. For example:
-
 ```scss
 sh-4.2$ dig web.aws.microgreens4life.org @127.0.0.1 +short
 10.10.0.172
 10.10.10.31
 ```
-
 From the AWS console, navigate to the Route 53 service in the us-east-1 region and validate the A record hosted in your private Route 53 zone is using the same IP addresses that your dns server in us-east-2 just resolved to.
+8. Navigate to the EC2 instances in us-east-2 and select `micros4l-onpremapp` and initiate a connection to it via Session Manager. Enter `sudo -i` and with your editor of choice, vi or nano into the `/etc/sysconfig/network-scripts/ifcfg-eth0` file. Scroll to the end of the file and paste the following contents replacing the `THE_PRIVATE_IP_OF_ONPREM_DNS_A/B` values with the actual private IP addresses of the onprem DNS servers which were given in the outputs of your terraform apply for us-east-2 implementation in step 3.):
+```scss
+DNS1=THE_PRIVATE_IP_OF_ONPREM_DNS_A
+DNS2=THE_PRIVATE_IP_OF_ONPREM_DNS_B
+```
+Restart the network services: `systemctl restart network`
+Run a test ping/dig from the onpremapp to the AWS route 53 endpoint: 
+```scss
+ping web.aws.microgreens4life.org
+dig web.aws.microgreens4life.org +short
+```
+Navigate back to the ec2 instances in us-east-1 and initiate a systems manager session on micros4l-awsec2a/b and test dns resolution of the onprem hosted domain: 
+```scss
+ping app.corp.microgreens4life.org
+dig app.corp.microgreens4life.org +short
+```
+The private AWS vpc instances in us-east-1 are successfully resolving the corp domains hosted in the private "on prem" VPC hosted in us-east-2 via the outbound endpoint and forwarding rule and routed via the vpc peering connection.
 
