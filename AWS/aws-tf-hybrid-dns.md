@@ -3,7 +3,7 @@
 _Last updated: July 03, 2022_
 
 ## Overview
-The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on prem private corporate data center. The intent of this design is to simulate a prospective hybrid DNS cloud connectivity to an on prem environment however, the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection through various Route 53 and Bind DNS server components as detailed below.
+The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on prem private corporate data center. The intent of this design is to simulate a prospective hybrid DNS cloud connectivity setup to an on prem environment using AWS DirectConnect (DX) however, the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection through various Route 53 and Bind DNS server components as detailed below.
 
 ### Pre-requisites
 
@@ -19,6 +19,7 @@ The purpose of this runbook is to demonstrate the implementation of an AWS Hybri
 - Actual AWS Hybrid DNS Network Design Architecture: [FIXME](FIXME)
 - Clone/Fork the repo containing the terraform artifacts for the AWS Hybrid DNS design here: [jksprattler/aws-networking](https://github.com/jksprattler/aws-networking.git)
   - relevant files are under `/aws-terraform-hybrid-dns`
+- [Set up integrated DNS resolution for hybrid networks in Amazon Route 53 - AWS Prescriptive Guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-integrated-dns-resolution-for-hybrid-networks-in-amazon-route-53.html)
 
 ### Simulated design diagram
 
@@ -105,13 +106,13 @@ Upon completion of the above procedure, you should now have 2 separate private e
 
 **Note** the original idea for this design came from Cloud Trainer, Adrian Cantrill. You can find the CFT stack, procedure steps, and videos for his lab [here](https://github.com/acantril/learn-cantrill-io-labs/tree/master/aws-hybrid-dns)
 
-#### Highlighting key differences between our deployments where I:
+#### Highlighting key differences between deployments where I:
 - Coded **all** infrastructure steps in *Terraform* including vpc peering, vpc peering inter region routes, route 53 inbound and outbound endpoints and forward rules, etc. instead of CloudFormation for initial/base infrastructure.
 - Coded outputs.tf files to provide values for the input variable strings for the deployments to the separate regions/modules to prevent needing to hunt down id's and ip addresses from within the AWS console (ie vpc peering id, route table id for peering connection, onpremdnsa/b private ip addresses for the aws zone file)
 - Deployed the simulation of the on prem / DX environment in a completely separate region (us-east-2) instead of all in the same us-east-1 region in an attempt to increase complexity, validate inter-region vpc peering works with DNS resolution against private Route 53 endpoints and just for overall better visualization of connectivity between 2 separate environments/regions
 - Chose microgreens4life for my Domain/zone instead of animals4life - nothing against animals, I just really love microgreens. I also replaced all resource names in my code with my variation of m4l*/micros4l*/microgreens4life* which allowed me the opportunity to deeply review the code line by line so I wasn't just copy/pasting pieces of Adrian's CFT stack code for the lab (ie a4l*/animals4l*/animals4life*).
 
-#### Highlighting a few issues I ran into that prevented DNS outbound requests and Systems Manager from working:
+#### Highlighting a few issues with DNS outbound requests and Systems Manager failing:
 - Outbound (egress) rules for DNS (tcp/udp) - needed for DNS requests to make it outbound from the onprem vpc to the aws inbound endpoints for Route 53 hosted zones and vice versa for the aws vpc to make outbound dns requests to the corp hosted zones in the onprem vpc - Applied these to both aws and onprem security groups 
 - Outbound (egress) rules for HTTPS - needed for SSM traffic in order to have Systems Manager connection for private IP space hosts in VPC - Applied these to both aws and onprem security groups
 - VPC Endpoint of com.amazonaws.<region>.s3 Gateway type is required on both aws and onprem VPC's in order for Systems Manager to connect successfully to ec2 instances: 
