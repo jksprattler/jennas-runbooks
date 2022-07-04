@@ -1,6 +1,6 @@
 # Hybrid DNS between AWS and On-prem with Terraform
 
-_Last updated: July 03, 2022_
+_Last updated: July 04, 2022_
 
 ## Overview
 The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on prem private corporate data center. The intent of this design is to simulate a prospective hybrid DNS cloud connectivity setup to an on prem environment using AWS DirectConnect (DX) however, the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection through various Route 53 and Bind DNS server components as detailed below.
@@ -112,7 +112,7 @@ Upon completion of the above procedure, you should now have 2 separate private e
 - Deployed the simulation of the on prem / DX environment in a completely separate region (us-east-2) instead of all in the same us-east-1 region in an attempt to increase complexity, validate inter-region vpc peering works with DNS resolution against private Route 53 endpoints and just for overall better visualization of connectivity between 2 separate environments/regions
 - Chose microgreens4life for my Domain/zone instead of animals4life - nothing against animals, I just really love microgreens. I also replaced all resource names in my code with my variation of m4l*/micros4l*/microgreens4life* which allowed me the opportunity to deeply review the code line by line so I wasn't just copy/pasting pieces of Adrian's CFT stack code for the lab (ie a4l*/animals4l*/animals4life*).
 
-#### Highlighting a few issues with DNS outbound requests and Systems Manager failing:
+#### Highlighting missing config from initial deploy (CFT stack) causing DNS outbound requests and Systems Manager to fail:
 - Outbound (egress) rules for DNS (tcp/udp) - needed for DNS requests to make it outbound from the onprem vpc to the aws inbound endpoints for Route 53 hosted zones and vice versa for the aws vpc to make outbound dns requests to the corp hosted zones in the onprem vpc - Applied these to both aws and onprem security groups 
 - Outbound (egress) rules for HTTPS - needed for SSM traffic in order to have Systems Manager connection for private IP space hosts in VPC - Applied these to both aws and onprem security groups
 - VPC Endpoint of com.amazonaws.<region>.s3 Gateway type is required on both aws and onprem VPC's in order for Systems Manager to connect successfully to ec2 instances: 
