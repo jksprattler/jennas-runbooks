@@ -72,7 +72,7 @@ FIXME
 systemctl restart named 
 systemctl status named 
 ```
-Using dig or nslookup, test that your local DNS server is resolving the AWS Route 53 private zone for aws.microgreens4life.org now that you've applied the Route 53 endpoint IP addresses into the Bind server's named.conf file. You should see it resolve to the 10.10.x.x private IP space of the us-east-1 AWS VPC where the Route 53 inbound endpoints are hosted. For example:
+Using dig or nslookup, test that your local DNS server is resolving the AWS Route 53 private zone for `aws.microgreens4life.org` now that you've applied the Route 53 endpoint IP addresses into the Bind server's named.conf file. You should see it resolve to the 10.10.x.x private IP space of the us-east-1 AWS VPC where the Route 53 inbound endpoints are hosted. For example:
 ```scss
 sh-4.2$ dig web.aws.microgreens4life.org @127.0.0.1 +short
 10.10.0.172
@@ -85,7 +85,8 @@ DNS1=THE_PRIVATE_IP_OF_ONPREM_DNS_A
 DNS2=THE_PRIVATE_IP_OF_ONPREM_DNS_B
 ```
 Restart the network services: `systemctl restart network`
-Run a test ping/dig from the onpremapp to the AWS route 53 endpoint: 
+
+Run a test ping/dig from the `micros4l-onpremapp` instance to the AWS route 53 hosted domain: 
 ```scss
 ping web.aws.microgreens4life.org
 dig web.aws.microgreens4life.org +short
@@ -95,5 +96,7 @@ Navigate back to the ec2 instances in us-east-1 and initiate a systems manager s
 ping app.corp.microgreens4life.org
 dig app.corp.microgreens4life.org +short
 ```
-The private AWS vpc instances in us-east-1 are successfully resolving the corp domains hosted in the private "on prem" VPC hosted in us-east-2 via the outbound endpoint and forwarding rule and routed via the vpc peering connection.
+The private AWS VPC instances in us-east-1 are successfully resolving the corp domains hosted in the private "on prem" VPC in us-east-2 via the outbound endpoint and forwarding rule and routed via the vpc peering connection. Conversely, the private "on prem" instances in us-east-2 are successfully resolving the web domain hosted in the private AWS VPC us-east-1 via the inbound endpoint.
+
+### Summary
 
