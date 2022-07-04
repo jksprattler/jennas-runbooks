@@ -89,7 +89,6 @@ DNS1=THE_PRIVATE_IP_OF_ONPREM_DNS_A
 DNS2=THE_PRIVATE_IP_OF_ONPREM_DNS_B
 ```
 Restart the network services: `systemctl restart network`
-
 Run a test ping/dig from the `micros4l-onpremapp` instance to the AWS route 53 hosted domain: 
 ```scss
 ping web.aws.microgreens4life.org
@@ -100,7 +99,20 @@ Navigate back to the ec2 instances in us-east-1 and initiate a systems manager s
 ping app.corp.microgreens4life.org
 dig app.corp.microgreens4life.org +short
 ```
-The private AWS VPC instances in us-east-1 are successfully resolving the corp domains hosted in the private "on prem" VPC in us-east-2 via the outbound endpoint and forwarding rule and routed via the vpc peering connection. Conversely, the private "on prem" instances in us-east-2 are successfully resolving the web domain hosted in the private AWS VPC us-east-1 via the inbound endpoint.
 
 ### Summary
+Upon completion of the above procedure, you should now have 2 separate private environments with fully integrated DNS resolution between them. The private AWS VPC instances in us-east-1 are successfully resolving the corp domains hosted in the private "on prem" VPC in us-east-2 via the outbound endpoint and forwarding rule and routed via the vpc peering connection. Conversely, the private "on prem" instances in us-east-2 are successfully resolving the web domain hosted in the private AWS VPC us-east-1 via the inbound endpoint.
 
+***Note that the original idea for this design came from Cloud Trainer, Adrian Cantrell. You can find the CFT stack, procedure steps, and videos for his lab [here](https://github.com/acantril/learn-cantrill-io-labs/tree/master/aws-hybrid-dns)
+
+Highlighting key differences between our deployments:
+- Coded *all* infrastructure steps in Terraform including vpc peering, vpc peering inter region routes, route 53 inbound and outbound endpoints and forward rules, etc entirely instead of a single CloudFormation template stack for the initial/base infrastructure.
+- Coded outputs.tf files to provide values for the input variable strings for the deployments to the separate regions/modules to prevent needing to hunt down id's and ip addresses from within the AWS console (ie vpc peering id, route table id for peering connection, onpremdnsa/b private ip addresses for the aws zone file)
+- Deployed the simulation of the on prem / DX environment in a completely separate region (us-east-2) instead of all in the same us-east-1 region in an attempt to increase complexity, validate inter-region vpc peering works with DNS resolution against private Route 53 endpoints and just for overall better visualization of connectivity between 2 separate environments/regions
+- I chose microgreens4life for my Domain/zone instead of animals4life - nothing against animals, I just really love microgreens. I also replaced all resource names with my variation of m4l*/micros4l*/microgreens4life* which allowed me the opportunity to deeply review the code line by line so I wasn't just copy/pasting pieces of Adrian's CFT stack code for the lab (ie a4l*/animals4l*/animals4life*).
+
+Highlighting a few issues I ran into that prevented DNS outbound requests and Systems Manager from working:
+- Outbound (egress) rules for DNS (tcp/udp) - needed for DNS requests to make it outbound from the onprem vpc to the aws inbound endpoints for Route 53 hosted zones and vice versa for the aws vpc to make outbound dns requests to the corp hosted zones in the onprem vpc - Applied these to both aws and onprem security groups 
+- Outbound (egress) rules for HTTPS - needed for SSM traffic in order to have Systems Manager connection for private IP space hosts in VPC - Applied these to both aws and onprem security groups
+- VPC Endpoint of com.amazonaws.<region>.s3 Gateway type is required on both aws and onprem VPC's in order for Systems Manager to connect successfully to ec2 instances
+  - This wasn't very clear to me in the user guide details here nor did I see much documented when searching other blogs on the topic: https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html
