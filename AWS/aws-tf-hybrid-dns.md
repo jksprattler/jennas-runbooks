@@ -19,7 +19,7 @@ The purpose of this runbook is to demonstrate the implementation of an AWS Hybri
 - Actual AWS Hybrid DNS Network Design Architecture: [FIXME](FIXME)
 - Clone/Fork the repo containing the terraform artifacts for the AWS Hybrid DNS design here: [jksprattler/aws-networking](https://github.com/jksprattler/aws-networking.git)
   - relevant files are under `/aws-terraform-hybrid-dns`
-- [Set up integrated DNS resolution for hybrid networks in Amazon Route 53 - AWS Prescriptive Guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-integrated-dns-resolution-for-hybrid-networks-in-amazon-route-53.html)
+- Set up integrated DNS resolution for hybrid networks in Amazon Route 53 - [AWS Prescriptive Guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-integrated-dns-resolution-for-hybrid-networks-in-amazon-route-53.html)
 
 ### Simulated design diagram
 
@@ -115,5 +115,4 @@ Upon completion of the above procedure, you should now have 2 separate private e
 #### Highlighting missing config from initial deploy (CFT stack) causing DNS outbound requests and Systems Manager to fail:
 - Outbound (egress) rules for DNS (tcp/udp) - needed for DNS requests to make it outbound from the onprem vpc to the aws inbound endpoints for Route 53 hosted zones and vice versa for the aws vpc to make outbound dns requests to the corp hosted zones in the onprem vpc - Applied these to both aws and onprem security groups 
 - Outbound (egress) rules for HTTPS - needed for SSM traffic in order to have Systems Manager connection for private IP space hosts in VPC - Applied these to both aws and onprem security groups
-- VPC Endpoint of com.amazonaws.<region>.s3 Gateway type is required on both aws and onprem VPC's in order for Systems Manager to connect successfully to ec2 instances: 
-  - [Create a VPC endpoint AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html)
+- VPC Endpoint of com.amazonaws.<region>.s3 Gateway type is required on both aws and onprem VPC's in order for Systems Manager to connect successfully to ec2 instances - [Create a VPC endpoint AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html)
