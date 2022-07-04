@@ -3,7 +3,7 @@
 _Last updated: July 03, 2022_
 
 ## Overview
-The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on prem private corporate data center. The intent of this design is to simulate this architecture while the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection in addition to various Route 53 and Bind DNS server components as detailed below.
+The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on prem private corporate data center. The intent of this design is to simulate a prospective hybrid DNS cloud connectivity to an on prem environment however, the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection through various Route 53 and Bind DNS server components as detailed below.
 
 ### Pre-requisites
 
@@ -115,4 +115,4 @@ Upon completion of the above procedure, you should now have 2 separate private e
 - Outbound (egress) rules for DNS (tcp/udp) - needed for DNS requests to make it outbound from the onprem vpc to the aws inbound endpoints for Route 53 hosted zones and vice versa for the aws vpc to make outbound dns requests to the corp hosted zones in the onprem vpc - Applied these to both aws and onprem security groups 
 - Outbound (egress) rules for HTTPS - needed for SSM traffic in order to have Systems Manager connection for private IP space hosts in VPC - Applied these to both aws and onprem security groups
 - VPC Endpoint of com.amazonaws.<region>.s3 Gateway type is required on both aws and onprem VPC's in order for Systems Manager to connect successfully to ec2 instances: 
-[Create a VPC endpoint | AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html) 
+[Create a VPC endpoint AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html) 
