@@ -15,8 +15,8 @@ The purpose of this runbook is to demonstrate the implementation of an AWS Hybri
 ### Design Artifacts
 
 - YouTube demo recording: [FIXME](FIXME)
-- Simulated AWS Hybrid DNS Network Design Architecture: [FIXME](FIXME)
-- Actual AWS Hybrid DNS Network Design Architecture: [FIXME](FIXME)
+- [Simulated AWS Hybrid DNS Network Design Architecture](https://github.com/jksprattler/aws-networking/blob/main/aws-terraform-hybrid-dns/diagrams/Simulated-aws-hybrid-dns.png)
+- [Actual AWS Hybrid DNS Network Design Architecture](https://github.com/jksprattler/aws-networking/blob/main/aws-terraform-hybrid-dns/diagrams/Actual-aws-hybrid-dns.png)
 - Clone/Fork the repo containing the terraform artifacts for the AWS Hybrid DNS design here: [jksprattler/aws-networking](https://github.com/jksprattler/aws-networking.git)
   - relevant files are under `/aws-terraform-hybrid-dns`
 - Set up integrated DNS resolution for hybrid networks in Amazon Route 53 - [AWS Prescriptive Guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-integrated-dns-resolution-for-hybrid-networks-in-amazon-route-53.html)
