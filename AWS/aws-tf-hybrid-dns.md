@@ -77,7 +77,7 @@ FIXME
 systemctl restart named 
 systemctl status named 
 ```
-Using dig or nslookup, test that your local DNS server is resolving the AWS Route 53 private zone for `aws.microgreens4life.org` now that you've applied the Route 53 endpoint IP addresses into the Bind server's named.conf file. You should see it resolve to the 10.10.x.x private IP space of the us-east-1 AWS VPC where the Route 53 inbound endpoints are hosted. For example:
+Using dig or nslookup, test that your local DNS server is resolving the AWS Route 53 private zone/domain for `aws.microgreens4life.org` now that you've applied the Route 53 endpoint IP addresses into the Bind server's named.conf file. You should see it resolve to the 10.10.x.x private IP space of the us-east-1 AWS VPC where the Route 53 inbound endpoints are hosted. For example:
 ```scss
 sh-4.2$ dig web.aws.microgreens4life.org @127.0.0.1 +short
 10.10.0.172
@@ -90,12 +90,12 @@ DNS1=THE_PRIVATE_IP_OF_ONPREM_DNS_A
 DNS2=THE_PRIVATE_IP_OF_ONPREM_DNS_B
 ```
 Restart the network services: `systemctl restart network`
-Run a test ping/dig from the `micros4l-onpremapp` instance to the AWS route 53 hosted domain: 
+Run a test ping/dig from the `micros4l-onpremapp` instance to the AWS route 53 hosted subdomain: 
 ```scss
 ping web.aws.microgreens4life.org
 dig web.aws.microgreens4life.org +short
 ```
-Navigate back to the ec2 instances in us-east-1 and initiate a systems manager session on micros4l-awsec2a/b and test dns resolution of the onprem hosted domain: 
+Navigate back to the ec2 instances in us-east-1 and initiate a systems manager session on micros4l-awsec2a/b and test dns resolution of the onprem hosted subdomain: 
 ```scss
 ping app.corp.microgreens4life.org
 dig app.corp.microgreens4life.org +short
