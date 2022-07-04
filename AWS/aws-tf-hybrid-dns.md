@@ -22,8 +22,10 @@ The purpose of this runbook is to demonstrate the implementation of an AWS Hybri
 - Set up integrated DNS resolution for hybrid networks in Amazon Route 53 - [AWS Prescriptive Guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-integrated-dns-resolution-for-hybrid-networks-in-amazon-route-53.html)
 
 ### Simulated design diagram
+![Simulated-aws-hybrid-dns](/images/Simulated-aws-hybrid-dns.png)
 
 ### Actual design diagram
+![Actual-aws-hybrid-dns](/images/Actual-aws-hybrid-dns.png)
 
 ### Architecture
 The us-east-1 region will be hosting the `micros4l-aws` VPC with a prefix of 10.10.0.0/16 containing 2 private subnets. Two basic t2.micro EC2 instances, `micros4l-awsec2b/b` will be deployed here for testing DNS resolution into our simulated Corporate on-prem datacenter (which actually lives in us-east-2). Each instance is deployed in a separate subnet/availability zone.
@@ -70,7 +72,7 @@ terraform apply
 ```
 Resources deployed in this terraform module:
 - `ec2.tf` - micros4l-awsec2a/b AWS instances
-- `route53.tf` - aws.microgreens4life.org Route 53 private zone, web.aws.microgreens4life.org A record, Route 53 Inbound endpoint, Route 53 Outbound endpoint for the corp.microgreens4life.org domain with a Forwarding rule pointing to the Corp on prem environment (us-east-2)
+- `route53.tf` - aws.microgreens4life.org Route 53 hosted private zone, web.aws.microgreens4life.org A record, Route 53 Inbound endpoint, Route 53 Outbound endpoint for the corp.microgreens4life.org domain with a Forwarding rule pointing to the Corp on prem environment (us-east-2)
 - `vpc.tf` - VPC with prefix 10.10.0.0/16, 2x private subnets, private route table associated with the 2x subnets, VPC Peering connectivity between the AWS us-east-1 region to the "on prem" us-east-2 region, Security Group and rules allowing SSM access and DNS requests, VPC Endpoints for SSM connectivity 
 5. Capture the outputs from the `/us-east-1` module deployment and save them in a temp text file for use as input in the next step. Note you'll only need the "ip" address output from each of the 2 endpoints. For example:
 ```scss
@@ -112,7 +114,7 @@ Upon completion of the above procedure, you should now have 2 separate private e
 **Note** the original idea for this design came from Cloud Trainer, Adrian Cantrill. You can find the CFT stack, procedure steps, and videos for his lab [here](https://github.com/acantril/learn-cantrill-io-labs/tree/master/aws-hybrid-dns)
 
 #### Differences between deployments where I:
-- Coded **all** infrastructure steps in *Terraform* including vpc peering, vpc peering inter region routes, route 53 inbound and outbound endpoints and forward rules, etc. instead of CloudFormation (`HybridDNS.yaml`) for initial/base infrastructure.
+- Coded **all** infrastructure steps in *Terraform* including vpc peering, vpc peering inter region routes, route 53 inbound and outbound endpoints and forward rules, etc. instead of CloudFormation (`HybridDNS.yaml`) used for initial/base infrastructure.
 - Coded outputs.tf files to provide values for the input variable strings for the deployments to the separate regions/modules to prevent needing to hunt down id's and ip addresses from within the AWS console (ie vpc peering id, route table id for peering connection, onpremdnsa/b private ip addresses for the aws zone file)
 - Deployed the simulation of the on prem / DX environment in a completely separate region (us-east-2) instead of all in the same us-east-1 region in an attempt to increase complexity, validate inter-region vpc peering works with DNS resolution against private Route 53 endpoints and just for overall better visualization of connectivity between 2 separate environments/regions
 - Chose microgreens4life for my Domain/zone instead of animals4life - nothing against animals, I just really love microgreens. I also replaced all resource names in my code with my variation of m4l*/micros4l*/microgreens4life* which allowed me the opportunity to deeply review the code line by line so I wasn't just copy/pasting pieces of Adrian's CFT stack code for the lab (ie a4l*/animals4l*/animals4life*).
