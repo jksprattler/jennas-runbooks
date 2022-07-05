@@ -123,25 +123,18 @@ dig app.corp.microgreens4life.org +short
 terraform destroy
 var.accepter_route_table_id
   Route table id of the accepter that you want to peer with it
-
   Enter a value: <Enter>
-
 var.accepter_vpc_id
   VPC id that you want to peer with it
-
   Enter a value: <Enter>
-
 var.onpremdnsa_priv_ip
   Private IP Address of micros4l-onpremdnsa
-
   Enter a value: 192.168.10.53 <-----onpremdnsa_ip
-
 var.onpremdnsb_priv_ip
   Private IP Address of micros4l-onpremdnsb
-
   Enter a value: 192.168.10.243 <-----onpremdnsa_ip
 ```
-Do the same for `us-east-2` - No prompts for input on this one.
+Do the same for `us-east-2` - No prompts for input on this one, simply just `terraform destroy` it.
 I've left the `/global/iam` resources in tact since it's just an IAM role and S3 bucket storing my terraform state files.
 
 ### Summary
