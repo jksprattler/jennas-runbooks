@@ -120,7 +120,7 @@ dig app.corp.microgreens4life.org +short
 ```
 10. Cleanup! Run a terraform destroy in each region/module starting with `us-east-1` - Note I configured ignore lifecycle rules on the accepter_route_table_id and accepter_vpc_id prompts so just hit Enter here to bypass these. You'll need to input the onpremdnsa/b_ip private IP's as I couldn't get a lifecycle rule to work here:
 ```scss
-❯ terraform destroy
+terraform destroy
 var.accepter_route_table_id
   Route table id of the accepter that you want to peer with it
 
