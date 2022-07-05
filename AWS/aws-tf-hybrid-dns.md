@@ -1,6 +1,6 @@
 # AWS Hybrid DNS with Terraform
 
-_Last updated: July 04, 2022_
+_Last updated: July 05, 2022_
 
 ## Overview
 The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on-prem private corporate data center. The intent of this design is to simulate a prospective hybrid DNS cloud connectivity setup to an on-prem environment using AWS DirectConnect (DX) however, the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection through various Route 53 services and Linux Bind DNS server components as detailed below.
@@ -17,7 +17,7 @@ The purpose of this runbook is to demonstrate the implementation of an AWS Hybri
 - YouTube [demo recording]()
 - Diagram: [Simulated AWS Hybrid DNS Network Design Architecture](https://github.com/jksprattler/aws-networking/blob/main/aws-terraform-hybrid-dns/diagrams/Simulated-aws-hybrid-dns.png)
 - Diagram: [Actual AWS Hybrid DNS Network Design Architecture](https://github.com/jksprattler/aws-networking/blob/main/aws-terraform-hybrid-dns/diagrams/Actual-aws-hybrid-dns.png)
-- Clone/Fork the repo containing the terraform artifacts for the AWS Hybrid DNS design here: [jksprattler/aws-networking](https://github.com/jksprattler/aws-networking.git)
+- Clone/Fork the repo containing the Terraform artifacts for the AWS Hybrid DNS design here: [jksprattler/aws-networking](https://github.com/jksprattler/aws-networking.git)
   - relevant files are under `/aws-terraform-hybrid-dns`
 - Set up integrated DNS resolution for hybrid networks in Amazon Route 53 - [AWS Prescriptive Guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-integrated-dns-resolution-for-hybrid-networks-in-amazon-route-53.html)
 
@@ -137,7 +137,7 @@ Do the same for `us-east-2` - No prompts for input on this one, simply just `ter
 I've left the `/global/iam` resources in tact since it's just an IAM role/policy and S3 bucket storing my terraform state files.
 
 ### Summary
-Upon completion of the above procedure, you should now have 2 separate private environments with fully integrated DNS resolution between them. The private AWS VPC instances in us-east-1 are successfully resolving the Corporate subdomain hosted in the private "on-prem" VPC in us-east-2 via the outbound endpoint and forwarding rule which gets routed via the vpc peering connection. Conversely, the private "on-prem" instances in us-east-2 are successfully resolving the web subdomain hosted in the private AWS VPC us-east-1 via the inbound endpoint resolver.
+Upon completion of the above procedure, you should now have 2 separate private environments with fully integrated DNS resolution between them. The private AWS VPC instances in us-east-1 are successfully resolving the Corporate subdomain hosted in the private "on-prem" VPC in us-east-2 via the outbound endpoint and forwarding rule rule for the Corporate domain which gets routed via the VPC Peering connection. Conversely, the private "on-prem" instances in us-east-2 are successfully resolving the web subdomain hosted in the private AWS VPC us-east-1 via the inbound endpoint resolver.
 
 **Note** the original idea for this design came from Cloud Trainer, Adrian Cantrill. You can find the CFT stack, procedure steps, and videos for his lab [here](https://github.com/acantril/learn-cantrill-io-labs/tree/master/aws-hybrid-dns)
 
