@@ -21,10 +21,9 @@ The purpose of this runbook is to demonstrate the implementation of an AWS Hybri
   - relevant files are under `/aws-terraform-hybrid-dns`
 - Set up integrated DNS resolution for hybrid networks in Amazon Route 53 - [AWS Prescriptive Guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-integrated-dns-resolution-for-hybrid-networks-in-amazon-route-53.html)
 
-### Simulated design diagram
+### Diagrams
 ![Simulated-aws-hybrid-dns](/images/Simulated-aws-hybrid-dns.png)
 
-### Actual design diagram
 ![Actual-aws-hybrid-dns](/images/Actual-aws-hybrid-dns.png)
 
 ### Architecture
