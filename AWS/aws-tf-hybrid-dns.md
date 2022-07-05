@@ -14,7 +14,7 @@ The purpose of this runbook is to demonstrate the implementation of an AWS Hybri
 
 ### Design Artifacts
 
-- YouTube [demo recording]()
+- YouTube [demo recording](https://youtu.be/iQ6OzaN4hyE)
 - Diagram: [Simulated AWS Hybrid DNS Network Design Architecture](https://github.com/jksprattler/aws-networking/blob/main/aws-terraform-hybrid-dns/diagrams/Simulated-aws-hybrid-dns.png)
 - Diagram: [Actual AWS Hybrid DNS Network Design Architecture](https://github.com/jksprattler/aws-networking/blob/main/aws-terraform-hybrid-dns/diagrams/Actual-aws-hybrid-dns.png)
 - Clone/Fork the repo containing the Terraform artifacts for the AWS Hybrid DNS design here: [jksprattler/aws-networking](https://github.com/jksprattler/aws-networking.git)
