@@ -121,7 +121,7 @@ dig app.corp.microgreens4life.org +short
 ```
 
 ### Summary
-Upon completion of the above procedure, you should now have 2 separate private environments with fully integrated DNS resolution between them. The private AWS VPC instances in us-east-1 are successfully resolving the Corporate domain hosted in the private "on-prem" VPC in us-east-2 via the outbound endpoint and forwarding rule which gets routed via the vpc peering connection. Conversely, the private "on-prem" instances in us-east-2 are successfully resolving the web domain hosted in the private AWS VPC us-east-1 via the inbound endpoint resolver.
+Upon completion of the above procedure, you should now have 2 separate private environments with fully integrated DNS resolution between them. The private AWS VPC instances in us-east-1 are successfully resolving the Corporate subdomain hosted in the private "on-prem" VPC in us-east-2 via the outbound endpoint and forwarding rule which gets routed via the vpc peering connection. Conversely, the private "on-prem" instances in us-east-2 are successfully resolving the web subdomain hosted in the private AWS VPC us-east-1 via the inbound endpoint resolver.
 
 **Note** the original idea for this design came from Cloud Trainer, Adrian Cantrill. You can find the CFT stack, procedure steps, and videos for his lab [here](https://github.com/acantril/learn-cantrill-io-labs/tree/master/aws-hybrid-dns)
 
