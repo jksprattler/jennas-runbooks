@@ -118,6 +118,31 @@ dig web.aws.microgreens4life.org +short
 ping app.corp.microgreens4life.org
 dig app.corp.microgreens4life.org +short
 ```
+10. Cleanup! Run a terraform destroy in each region/module starting with `us-east-1` - Note I configured ignore lifecycle rules on the accepter_route_table_id and accepter_vpc_id prompts so just hit Enter here to bypass these. You'll need to input the onpremdnsa/b_ip private IP's as I couldn't get a lifecycle rule to work here:
+```scss
+❯ terraform destroy
+var.accepter_route_table_id
+  Route table id of the accepter that you want to peer with it
+
+  Enter a value: <Enter>
+
+var.accepter_vpc_id
+  VPC id that you want to peer with it
+
+  Enter a value: <Enter>
+
+var.onpremdnsa_priv_ip
+  Private IP Address of micros4l-onpremdnsa
+
+  Enter a value: 192.168.10.53 <-----onpremdnsa_ip
+
+var.onpremdnsb_priv_ip
+  Private IP Address of micros4l-onpremdnsb
+
+  Enter a value: 192.168.10.243 <-----onpremdnsa_ip
+```
+Do the same for `us-east-2` - No prompts for input on this one.
+I've left the `/global/iam` resources in tact since it's just an IAM role and S3 bucket storing my terraform state files.
 
 ### Summary
 Upon completion of the above procedure, you should now have 2 separate private environments with fully integrated DNS resolution between them. The private AWS VPC instances in us-east-1 are successfully resolving the Corporate subdomain hosted in the private "on-prem" VPC in us-east-2 via the outbound endpoint and forwarding rule which gets routed via the vpc peering connection. Conversely, the private "on-prem" instances in us-east-2 are successfully resolving the web subdomain hosted in the private AWS VPC us-east-1 via the inbound endpoint resolver.
