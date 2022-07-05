@@ -132,10 +132,10 @@ var.onpremdnsa_priv_ip
   Enter a value: 192.168.10.53 <-----onpremdnsa_ip
 var.onpremdnsb_priv_ip
   Private IP Address of micros4l-onpremdnsb
-  Enter a value: 192.168.10.243 <-----onpremdnsa_ip
+  Enter a value: 192.168.10.243 <-----onpremdnsb_ip
 ```
 Do the same for `us-east-2` - No prompts for input on this one, simply just `terraform destroy` it.
-I've left the `/global/iam` resources in tact since it's just an IAM role and S3 bucket storing my terraform state files.
+I've left the `/global/iam` resources in tact since it's just an IAM role/policy and S3 bucket storing my terraform state files.
 
 ### Summary
 Upon completion of the above procedure, you should now have 2 separate private environments with fully integrated DNS resolution between them. The private AWS VPC instances in us-east-1 are successfully resolving the Corporate subdomain hosted in the private "on-prem" VPC in us-east-2 via the outbound endpoint and forwarding rule which gets routed via the vpc peering connection. Conversely, the private "on-prem" instances in us-east-2 are successfully resolving the web subdomain hosted in the private AWS VPC us-east-1 via the inbound endpoint resolver.
