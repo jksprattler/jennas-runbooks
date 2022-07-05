@@ -3,7 +3,7 @@
 _Last updated: July 04, 2022_
 
 ## Overview
-The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on-prem private corporate data center. The intent of this design is to simulate a prospective hybrid DNS cloud connectivity setup to an on-prem environment using AWS DirectConnect (DX) however, the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection through various Route 53 service and Linux Bind DNS server components as detailed below.
+The purpose of this runbook is to demonstrate the implementation of an AWS Hybrid DNS design and architecture between an AWS region hosting private only subnets and an on-prem private corporate data center. The intent of this design is to simulate a prospective hybrid DNS cloud connectivity setup to an on-prem environment using AWS DirectConnect (DX) however, the actual implementation will provide private DNS resolution over an established inter-region AWS VPC Peering connection through various Route 53 services and Linux Bind DNS server components as detailed below.
 
 ### Pre-requisites
 
