@@ -1,7 +1,7 @@
 # Jenna's Runbooks
 
 ## About
-Welcome to Jenna's Runbooks where I'll be documenting my technical journey diving into topics such as Multi-Cloud (AWS, Azure, GCP, OCI), DevOps, Networking and Automation.
+Welcome to Jenna's Runbooks where I'll be documenting my technical journey diving into topics such as Multi-Cloud (AWS, Azure, GCP), DevOps, Networking, Security and Automation.
 
 You can also find me on:
 - [GitHub](https://github.com/jksprattler)
