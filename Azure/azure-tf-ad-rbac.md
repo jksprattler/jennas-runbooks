@@ -40,13 +40,13 @@ The purpose of this runbook is to demonstrate a potential approach to managing A
 ### Procedure
 
 1. Authenticate to Azure and configure local environment variables in order to run terraform commands from your local terminal:
-```script
+```scss
 az login
 export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
 export ARM_ACCESS_KEY="<insert storage account access key used for backend state configs>"
 ```
 2. Create an Azure Service Principal (SPN) as your identity for provisioning the terraform confgiuration using the GH Actions automation workflows:
-```scss
+```script
 az ad sp create-for-rbac --name "gh-actions-runbooks-ad" --role owner \
                          --scopes /subscriptions/{subscription-id} \
                          --sdk-auth                        
