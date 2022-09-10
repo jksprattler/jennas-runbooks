@@ -8,11 +8,11 @@ The purpose of this runbook is to demonstrate a potential approach to managing A
 
 ### Azure AD & RBAC Topics Covered:
 
-- Azure Service Principal (SPN) to provision terraform configuration via GitHub Actions automation
 - Azure AD identity governance of users and groups (dynamic)
 - Azure RBAC group assignment using both built-in and custom roles 
 - Azure RBAC assignments scoped to dynamic Azure AD groups
 - Azure AD Conditional Access Policy enforcing Multi-factor authentication (MFA) for Users based on dynamic Group membership
+- Azure Service Principal (SPN) to provision terraform configuration via GitHub Actions automation
 - Azure AD self-service password reset (SSPR)
 
 ### Pre-requisites
@@ -21,7 +21,7 @@ The purpose of this runbook is to demonstrate a potential approach to managing A
 - Microsoft Account
 - Azure Subscription
 - Azure AD Premium P1/P2 license required for configuring: Conditional Access policy, MFA with conditional access, Dynamic groups
-  - A free trial can be activated from within our Azure AD tenant for a limited number of days
+  - A free trial can be activated from within your Azure AD tenant for a limited time
 - Azure [CLI](https://docs.microsoft.com/en-us/cli/azure/) installed and credentials for [authentication](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli)
 - Terraform [installed](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 - Azure RG, Storage account and blob container setup if you choose to maintain terraform state files remotely.
@@ -40,7 +40,7 @@ The purpose of this runbook is to demonstrate a potential approach to managing A
 ### Procedure
 
 1. Authenticate to Azure and configure local environment variables in order to run terraform commands from your local terminal:
-```scss
+```script
 az login
 export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
 export ARM_ACCESS_KEY="<insert storage account access key used for backend state configs>"
