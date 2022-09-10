@@ -4,7 +4,7 @@ _Last updated: September 10, 2022_
 
 ## Overview
 
-The purpose of this runbook is to demonstrate a potential approach to managing Azure AD users/groups and Role-Based Access Control (RBAC) following a declarative model by using Terraform and GitHub Actions CI/CD Workflows. Both the [Azure AD](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs) and [Azure RM](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Terraform providers will be used to implement IAM as code which will allow for automated provisioning of users, groups and role assignments. The principal of least privilege will be followed in delegation of both Azure AD manually through the Portal UI and Azure RBAC assignments programmatically through Terraform. Users will be assigned to AD Groups dynamically based on department (ie Art, Engineering). A conditional access policy will be created to demonstrate Multi-factor authentication (MFA) based on dynamic group assignment. Finally, Azure AD self-service password reset (SSPR) will be enabled for all users. An Azure Service Principal will be used to perform the automated GitHub Actions workflow jobs generating terraform output based on code commits.
+The purpose of this runbook is to demonstrate a potential approach to managing Azure AD users/groups and Role-Based Access Control (RBAC) following a declarative model by using Terraform and GitHub Actions CI/CD Workflows. Both the [Azure AD](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs) and [Azure RM](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Terraform providers will be used to implement IAM as code which will allow for automated provisioning of users, groups and role assignments. The principal of least privilege will be followed in delegation of both Azure AD manually through the Portal UI and Azure RBAC assignments programmatically through Terraform. Users will be assigned to AD Groups dynamically based on department (ie Art, Engineering). A conditional access policy will be created to demonstrate Multi-factor authentication (MFA) based on dynamic group assignment. An Azure Service Principal will be used to perform the automated GitHub Actions workflow jobs generating terraform output based on code commits. Finally, Azure AD self-service password reset (SSPR) will be enabled for all users. 
 
 ### Azure AD & RBAC Topics Covered:
 
@@ -40,12 +40,12 @@ The purpose of this runbook is to demonstrate a potential approach to managing A
 ### Procedure
 
 1. Authenticate to Azure and configure local environment variables in order to run terraform commands from your local terminal:
-```scss
+```script
 az login
 export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
 export ARM_ACCESS_KEY="<insert storage account access key used for backend state configs>"
 ```
-2. Create an Azure Service Principal (SPN) as your identity for provisioning the terraform confgiuration using the GH Actions automation workflows:
+2. Create an Azure Service Principal (SPN) with the RBAC role of owner so it has privileges to both manage all resources and assign roles to other users. This identity will be used for provisioning the terraform confgiuration using the GH Actions automation workflows:
 ```script
 az ad sp create-for-rbac --name "gh-actions-runbooks-ad" --role owner \
                          --scopes /subscriptions/{subscription-id} \
@@ -67,7 +67,7 @@ ARM_TENANT_ID="<azure_subscription_tenant_id>"
 ARM_CLIENT_ID="<service_principal_appid>"
 ARM_CLIENT_SECRET="<service_principal_password>"
 ```
-4. Assign the User administrator role to the SPN. From Portal UI navigate to Azure AD > Roles and Administrators blade > "User administrator" Role > Add Assignments > Select members > Filter by service principal display name ***Note as of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave me errors so portal seems to be the best option.
+4. Assign the User administrator role to the SPN. From Portal UI navigate to Azure AD > Roles and Administrators blade > "User administrator" Role > Add Assignments > Select members > Filter by service principal display name ***Note as of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave errors leaving the portal as the best option.
 5. Disable Security defaults in order to enable the creation of a Conditional Access policy. From Portal UI navigate to Azure AD > properties > manage security defaults > enable security defaults toggle to no
 6. Create a new Azure AD user by making a new local branch from the cloned [jksprattler/azure-security](https://github.com/jksprattler/azure-security) repo. Run the `scripts/azuread-create-users.py` script to generate the terraform syntax for your new user: `python scripts/azuread-create-users.py`
 - The script will run an az cli command invoking a custom request through Microsoft Graph in order to capture your Azure AD default domain using your current login-credentials. 
