@@ -49,8 +49,7 @@ export ARM_ACCESS_KEY="<insert storage account access key used for backend state
 ```scss
 az ad sp create-for-rbac --name "gh-actions-runbooks-ad" --role owner \
                          --scopes /subscriptions/{subscription-id} \
-                         --sdk-auth
-                          
+                         --sdk-auth                        
 # Replace {subscription-id} with the subscription details
 # The command should output a JSON object similar to this:
 {
