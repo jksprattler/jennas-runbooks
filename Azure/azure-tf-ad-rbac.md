@@ -47,21 +47,19 @@ export ARM_ACCESS_KEY="<insert storage account access key used for backend state
 ```
 2. Create an Azure Service Principal (SPN) as your identity for provisioning the terraform confgiuration using the GH Actions automation workflows:
 ```scss
-   az ad sp create-for-rbac --name "gh-actions-runbooks-ad" --role owner \
-                            --scopes /subscriptions/{subscription-id} \
-                            --sdk-auth
-                            
-  # Replace {subscription-id} with the subscription details
-
-  # The command should output a JSON object similar to this:
-
-  {
-    "clientId": "<GUID>",
-    "clientSecret": "<GUID>",
-    "subscriptionId": "<GUID>",
-    "tenantId": "<GUID>",
-    (...)
-  }  
+az ad sp create-for-rbac --name "gh-actions-runbooks-ad" --role owner \
+                         --scopes /subscriptions/{subscription-id} \
+                         --sdk-auth
+                          
+# Replace {subscription-id} with the subscription details
+# The command should output a JSON object similar to this:
+{
+  "clientId": "<GUID>",
+  "clientSecret": "<GUID>",
+  "subscriptionId": "<GUID>",
+  "tenantId": "<GUID>",
+  (...)
+}  
 ```
 3. Assign the output of the JSON objects as GitHub Secrets in your repo using the following variables:
 ```scss
@@ -95,7 +93,7 @@ Upon completion of the above procedure, you should now have a basic architecture
 
 ### References
 
-- [Enable Azure AD Multi-Factor Authentication - Microsoft Entra | Microsoft Docs](https://docs.microsoft.com/en-us/azure/active-directory/authentication/tutorial-enable-azure-mfa)
-- [Enable Azure Active Directory self-service password reset - Microsoft Entra | Microsoft Docs](https://docs.microsoft.com/en-us/azure/active-directory/authentication/tutorial-enable-sspr)
-- [Automate Terraform with GitHub Actions | Terraform - HashiCorp Learn](https://learn.hashicorp.com/tutorials/terraform/github-actions)
+- [Enable Azure AD Multi-Factor Authentication - Microsoft Entra Microsoft Docs](https://docs.microsoft.com/en-us/azure/active-directory/authentication/tutorial-enable-azure-mfa)
+- [Enable Azure Active Directory self-service password reset - Microsoft Entra Microsoft Docs](https://docs.microsoft.com/en-us/azure/active-directory/authentication/tutorial-enable-sspr)
+- [Automate Terraform with GitHub Actions Terraform - HashiCorp Learn](https://learn.hashicorp.com/tutorials/terraform/github-actions)
 - Future improvements: Terraform for_each loop through a list of users defined in a CSV as outlined by [HashiCorp](https://learn.hashicorp.com/tutorials/terraform/azure-ad?in=terraform/azure) to improve your identity governance strategy as your user base grows increasing in complexity of management on a per user basis.
