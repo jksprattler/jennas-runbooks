@@ -1,10 +1,10 @@
 # Azure AD & RBAC with Terraform
 
-_Last updated: September 10, 2022_
+_Last updated: September 11, 2022_
 
 ## Overview
 
-The purpose of this runbook is to demonstrate a potential approach to managing Azure AD users/groups and Role-Based Access Control (RBAC) following a declarative model by using Terraform and GitHub Actions CI/CD Workflows. Both the [Azure AD](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs) and [Azure RM](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Terraform providers will be used to implement IAM as code which will allow for automated provisioning of users, groups and role assignments. The principal of least privilege will be followed in delegation of both Azure AD manually through the Portal UI and Azure RBAC assignments programmatically through Terraform. Users will be assigned to AD Groups dynamically based on department (ie Art, Engineering). A conditional access policy will be created to demonstrate Multi-factor authentication (MFA) based on dynamic group assignment. An Azure Service Principal will be used to perform the automated GitHub Actions workflow jobs generating terraform output based on code commits. Finally, Azure AD self-service password reset (SSPR) will be enabled for all users. 
+The purpose of this runbook is to demonstrate a potential approach to managing Azure AD users/groups and Role-Based Access Control (RBAC) by following Terraform's declarative model with automated checkouts using GitHub Actions CI/CD Workflows. Both the [Azure AD](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs) and [Azure RM](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) Terraform providers will be used to implement Identity & Access Management as code which will allow for automated provisioning of users, groups, custom role definitions, role assignments and conditional access policies. The principal of least privilege will be followed in delegation of both Azure AD and Azure RBAC assignments. The procedure will use a combination of AZ CLI, Terraform, python scripts and Azure Portal UI. Users will be assigned to AD Groups dynamically based on their department (ie Art, Engineering). A conditional access policy will be created to demonstrate Multi-factor authentication (MFA) enforcement based on dynamic group assignment. An Azure Service Principal (SPN) will be used to perform the automated GitHub Actions workflow jobs based on code commits generating terraform checks and plan output. Finally, Azure AD self-service password reset (SSPR) will be enabled for all users.
 
 ### Azure AD & RBAC Topics Covered:
 
@@ -28,7 +28,7 @@ The purpose of this runbook is to demonstrate a potential approach to managing A
 
 ### Design Artifacts
 
-- YouTube [demo recording FIXME]()
+- YouTube [demo recording]()
 - Clone/Fork the repo containing the Terraform artifacts for the Azure AD config here: [jksprattler/azure-security](https://github.com/jksprattler/azure-security)
   - Relevant files are under `/azuread-users-groups-roles`
   - Config for the storage account and blob container hosting the terraform backend state files is under `/azure-dev-infra`
@@ -45,7 +45,7 @@ az login
 export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
 export ARM_ACCESS_KEY="<insert storage account access key used for backend state configs>"
 ```
-2. Create an Azure Service Principal (SPN) with the RBAC role of owner so it has privileges to both manage all resources and assign roles to other users. This identity will be used for provisioning the terraform confgiuration using the GH Actions automation workflows:
+2. Create an Azure SPN assigning the RBAC role of owner at the subscription level so it has privileges to both manage all resources and assign RBAC roles to other users. This identity will be used for provisioning the terraform confgiuration using the GH Actions workflows:
 ```script
 az ad sp create-for-rbac --name "gh-actions-runbooks-ad" --role owner \
                          --scopes /subscriptions/{subscription-id} \
@@ -67,12 +67,13 @@ ARM_TENANT_ID="<azure_subscription_tenant_id>"
 ARM_CLIENT_ID="<service_principal_appid>"
 ARM_CLIENT_SECRET="<service_principal_password>"
 ```
-4. Assign the User administrator role to the SPN. From Portal UI navigate to Azure AD > Roles and Administrators blade > "User administrator" Role > Add Assignments > Select members > Filter by service principal display name ***Note as of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave errors leaving the portal as the best option.
-5. Disable Security defaults in order to enable the creation of a Conditional Access policy. From Portal UI navigate to Azure AD > properties > manage security defaults > enable security defaults toggle to no
-6. Create a new Azure AD user by making a new local branch from the cloned [jksprattler/azure-security](https://github.com/jksprattler/azure-security) repo. Run the `scripts/azuread-create-users.py` script to generate the terraform syntax for your new user: `python scripts/azuread-create-users.py`
-- The script will run an az cli command invoking a custom request through Microsoft Graph in order to capture your Azure AD default domain using your current login-credentials. 
+4. Assign the User administrator Azure AD role to the SPN. From Portal UI navigate to Azure AD > Roles and Administrators blade > "User administrator" Role > Add Assignments > Select members > Filter by service principal display name ***Note as of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave errors leaving the portal as the best option.
+5. Disable Security defaults in order to enable the creation of a Conditional Access policy. From the Portal UI navigate to Azure AD > properties > manage security defaults > enable security defaults toggle to no
+6. Create a new Azure AD user by making a new local branch from the cloned [jksprattler/azure-security](https://github.com/jksprattler/azure-security) repo. Run the `azuread-create-users.py` script to generate the terraform syntax for your new user: 
+`python scripts/azuread-create-users.py`
+- The script will run an az cli command invoking a custom request through Microsoft Graph in order to capture your Azure AD default domain using your current az login. 
 7. Navigate to the `azuread-users-groups-roles` directory and paste the terraform code for your new user into the `main.tf` file using either of the existing Engineering or Art AD Groups or create a new group. For example:
-```scss
+```script
 resource "azuread_user" "raybrown" {
   user_principal_name   = "raybrown@jennasrunbooks.com
   display_name          = "Ray Brown"
@@ -86,9 +87,17 @@ resource "azuread_user" "raybrown" {
 9. From the `azuread-users-groups-roles` directory, perform your `terraform apply` to create the new Azure AD user.
 10. Enable Self Service Password Reset (SSPR) for All users. From Portal UI navigate to:  Azure AD > Password reset > Auth methods > SSPR enabled: All
 
+#### Import Existing Azure AD Users into Terraform
+If you have a number of users that already exist in your Azure AD and are looking to start managing this part of your cloud estate using Terraform, you can run the `scripts/azuread-import-users.py` script which will extract a list of your current Azure AD user's Display Names, Principal Names and Departments associated with the current Azure tenant you are logged into (`az login`). The script runs an az ad query capturing the user details and copies them to a tsv file which is then read by python and converted into Terraform syntax. Once you have your list of users, follow the Procedure above starting at step 7.
+```script
+python scripts/azuread-import-users.py
+# For much larger lists of users, save the python output to either a txt or tf file
+python scripts/azuread-import-users.py > users.tf
+```
+
 ### Summary
 
-Upon completion of the above procedure, you should now have a basic architecture started for implementing Azure Identity & Access Management as code using Azure AD and Azure RM Terraform providers. A CI/CD pipeline is implemented using a Github Actions workflow automation in order to provide the output of Terraform format/init/validate/plan results based on PR commits providing a solution for code review by your team prior to actualy implementation by running a `terraform apply` locally. Python scripts are available for generating Terraform syntax for new Azure AD users (`azuread-create-users.py `) and also for extracting a list of existing Azure AD users which then generates the terraform code for the list of existing users to be imported into your terraform state (`azuread-import-users.py`). While this approach might be a good initial start for managing your Azure IAM as code, alternatively I've included a link in the references section below to another more elegant solution by HashiCorp by using a for_each loop with a CSV file of users.
+Upon completion of the above procedure, you should now have a basic architecture started for implementing Azure IAM as code using Azure AD and Azure RM Terraform providers. A CI/CD pipeline is implemented using a Github Actions workflow automation in order to provide the output of Terraform format/init/validate/plan results based on PR commits providing a solution for code review by your team prior to implementation by running a `terraform apply` locally. Python scripts are available for generating Terraform syntax for new Azure AD users (`azuread-create-users.py `) and for extracting a list of existing Azure AD users which then generates the terraform code for the list of existing users to be imported into your terraform state (`azuread-import-users.py`). While this approach could be a good initial start for managing your Azure IAM as code, alternatively there's a link in the references section below to another more elegant solution provided by HashiCorp which uses a for_each loop against a CSV file of users.
 
 ### References
 
