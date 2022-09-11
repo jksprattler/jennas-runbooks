@@ -67,12 +67,16 @@ ARM_TENANT_ID="<azure_subscription_tenant_id>"
 ARM_CLIENT_ID="<service_principal_appid>"
 ARM_CLIENT_SECRET="<service_principal_password>"
 ```
-4. Assign the User administrator Azure AD role to the SPN. From Portal UI navigate to Azure AD > Roles and Administrators blade > "User administrator" Role > Add Assignments > Select members > Filter by service principal display name ***Note as of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave errors leaving the portal as the best option.
-5. Disable Security defaults in order to enable the creation of a Conditional Access policy. From the Portal UI navigate to Azure AD > properties > manage security defaults > enable security defaults toggle to no
-6. Create a new Azure AD user by making a new local branch from the cloned [jksprattler/azure-security](https://github.com/jksprattler/azure-security) repo. Run the `azuread-create-users.py` script to generate the terraform syntax for your new user: 
-`python scripts/azuread-create-users.py`
+4. Assign the User administrator Azure AD role to the SPN. From Portal UI navigate to Azure AD > Roles and Administrators blade > "User administrator" Role > Add Assignments > Select members > Filter by service principal display name
+```tip
+Note as of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave errors leaving the portal as the best option.
+```
+5. Assign the API permissions from the below screenshot to the SPN. From Portal UI navigate to App registrations > locate and select your SPN > API permissions: Add a permission and be sure to select "Grant admin consent for Default Directory" once all the Application type API permissions have been added.
+![gh-actions-runbooks-ad-api-permissions.png](/images/gh-actions-runbooks-ad-api-permissions.png)
+6. Disable Security defaults in order to enable the creation of a Conditional Access policy. From the Portal UI navigate to Azure AD > properties > manage security defaults > enable security defaults toggle to no
+7. Create a new Azure AD user by making a new local branch from the cloned [jksprattler/azure-security](https://github.com/jksprattler/azure-security) repo. Run the `azuread-create-users.py` script to generate the terraform syntax for your new user: `python scripts/azuread-create-users.py`
 - The script will run an az cli command invoking a custom request through Microsoft Graph in order to capture your Azure AD default domain using your current az login. 
-7. Navigate to the `azuread-users-groups-roles` directory and paste the terraform code for your new user into the `main.tf` file using either of the existing Engineering or Art AD Groups or create a new group. For example:
+8. Navigate to the `azuread-users-groups-roles` directory and paste the terraform code for your new user into the `main.tf` file using either of the existing Engineering or Art AD Groups or create a new group. For example:
 ```script
 resource "azuread_user" "raybrown" {
   user_principal_name   = "raybrown@jennasrunbooks.com
@@ -82,10 +86,10 @@ resource "azuread_user" "raybrown" {
   force_password_change = true
 }
 ```
-8. Save and commit the changes. Review the `github-actions` bot output from your PR, specifically the terraform plan results, which will perform the following functions on your behalf using the Azure SPN (ie `gh-actions-runbooks-ad`):
+9. Save and commit the changes. Review the `github-actions` bot output from your PR, specifically the terraform plan results, which will perform the following functions on your behalf using the Azure SPN (ie `gh-actions-runbooks-ad`):
 ![azuread-gh-actions.png](/images/azuread-gh-actions.png)
-9. From the `azuread-users-groups-roles` directory, perform your `terraform apply` to create the new Azure AD user.
-10. Enable Self Service Password Reset (SSPR) for All users. From Portal UI navigate to:  Azure AD > Password reset > Auth methods > SSPR enabled: All
+10. From the `azuread-users-groups-roles` directory, perform your `terraform apply` to create the new Azure AD user.
+11. Enable Self Service Password Reset (SSPR) for All users. From Portal UI navigate to:  Azure AD > Password reset > Auth methods > SSPR enabled: All
 
 #### Import Existing Azure AD Users into Terraform
 If you have a number of users that already exist in your Azure AD and are looking to start managing this part of your cloud estate using Terraform, you can run the `scripts/azuread-import-users.py` script which will extract a list of your current Azure AD user's Display Names, Principal Names and Departments associated with the current Azure tenant you are logged into (`az login`). The script runs an az ad query capturing the user details and copies them to a tsv file which is then read by python and converted into Terraform syntax. Once you have your list of users, follow the Procedure above starting at step 7.
