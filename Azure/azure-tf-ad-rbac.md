@@ -1,6 +1,6 @@
 # Azure AD & RBAC with Terraform
 
-_Last updated: September 11, 2022_
+_Last updated: September 12, 2022_
 
 ## Overview
 
@@ -71,7 +71,7 @@ ARM_CLIENT_SECRET="<service_principal_password>"
 ```tip
 As of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave errors leaving the portal as the best option.
 ```
-5. Assign the API permissions from the below screenshot to the SPN. From Portal UI navigate to App registrations > locate and select your SPN > API permissions: Add a permission and be sure to select "Grant admin consent for Default Directory" once all the Application type API permissions have been added.
+5. Assign the API permissions from the below screenshot to the SPN to allow read/write access to the conditional access policy. From Portal UI navigate to App registrations > locate and select your SPN > API permissions: Add a permission and be sure to select "Grant admin consent for Default Directory" once all the Application type API permissions have been added.
 ![gh-actions-runbooks-ad-api-permissions.png](/images/gh-actions-runbooks-ad-api-permissions.png)
 6. Disable Security defaults in order to enable the creation of a Conditional Access policy. From the Portal UI navigate to Azure AD > properties > manage security defaults > enable security defaults toggle to no
 7. Create a new Azure AD user by making a new local branch from the cloned [jksprattler/azure-security](https://github.com/jksprattler/azure-security) repo. Run the `azuread-create-users.py` script to generate the terraform syntax for your new user: `python scripts/azuread-create-users.py`
