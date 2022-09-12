@@ -28,7 +28,7 @@ The purpose of this runbook is to demonstrate a potential approach to managing A
 
 ### Design Artifacts
 
-- YouTube [demo recording]()
+- YouTube [demo recording](https://youtu.be/KC76kOCb2wQ)
 - Clone/Fork the repo containing the Terraform artifacts for the Azure AD config here: [jksprattler/azure-security](https://github.com/jksprattler/azure-security)
   - Relevant files are under `/azuread-users-groups-roles`
   - Config for the storage account and blob container hosting the terraform backend state files is under `/azure-dev-infra`
