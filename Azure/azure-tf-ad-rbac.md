@@ -69,7 +69,7 @@ ARM_CLIENT_SECRET="<service_principal_password>"
 ```
 4. Assign the User administrator Azure AD role to the SPN. From Portal UI navigate to Azure AD > Roles and Administrators blade > "User administrator" Role > Add Assignments > Select members > Filter by service principal display name
 ```tip
-Note as of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave errors leaving the portal as the best option.
+As of this writing I couldn’t find an efficient CLI method for applying Azure AD roles to SPN's as Azure CLI is unsupported and Powershell cmdlets, which are still in preview mode, gave errors leaving the portal as the best option.
 ```
 5. Assign the API permissions from the below screenshot to the SPN. From Portal UI navigate to App registrations > locate and select your SPN > API permissions: Add a permission and be sure to select "Grant admin consent for Default Directory" once all the Application type API permissions have been added.
 ![gh-actions-runbooks-ad-api-permissions.png](/images/gh-actions-runbooks-ad-api-permissions.png)
@@ -92,7 +92,7 @@ resource "azuread_user" "raybrown" {
 11. Enable Self Service Password Reset (SSPR) for All users. From Portal UI navigate to:  Azure AD > Password reset > Auth methods > SSPR enabled: All
 
 #### Import Existing Azure AD Users into Terraform
-If you have a number of users that already exist in your Azure AD and are looking to start managing this part of your cloud estate using Terraform, you can run the `scripts/azuread-import-users.py` script which will extract a list of your current Azure AD user's Display Names, Principal Names and Departments associated with the current Azure tenant you are logged into (`az login`). The script runs an az ad query capturing the user details and copies them to a tsv file which is then read by python and converted into Terraform syntax. Once you have your list of users, follow the Procedure above starting at step 7.
+If you have a number of users that already exist in your Azure AD and are looking to start managing this part of your cloud estate using Terraform, you can run the `scripts/azuread-import-users.py` script which will extract a list of your current Azure AD user's Display Names, Principal Names and Departments associated with the current Azure tenant you are logged into (`az login`). The script runs an az ad query capturing the user details and copies them to a tsv file which is then read by python and converted into Terraform syntax. Once you have your list of users, follow the Procedure above starting at step 8.
 ```script
 python scripts/azuread-import-users.py
 # For much larger lists of users, save the python output to either a txt or tf file
