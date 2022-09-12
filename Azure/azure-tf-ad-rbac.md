@@ -45,7 +45,7 @@ az login
 export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
 export ARM_ACCESS_KEY="<insert storage account access key used for backend state configs>"
 ```
-2. Create an Azure SPN assigning the RBAC role of owner at the subscription level so it has privileges to both manage all resources and assign RBAC roles to other users. This identity will be used for provisioning the terraform confgiuration using the GH Actions workflows:
+2. Create an Azure SPN assigning the RBAC role of owner at the subscription level so it has privileges to both manage all resources and assign RBAC roles to other users. This identity will be used for provisioning the terraform configuration using the GH Actions workflows:
 ```script
 az ad sp create-for-rbac --name "gh-actions-runbooks-ad" --role owner \
                          --scopes /subscriptions/{subscription-id} \
