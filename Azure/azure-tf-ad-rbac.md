@@ -79,7 +79,7 @@ As of this writing I couldn’t find an efficient CLI method for applying Azure 
 8. Navigate to the `azuread-users-groups-roles` directory and paste the terraform code for your new user into the `main.tf` file using either of the existing Engineering or Art AD Groups or create a new group. For example:
 ```script
 resource "azuread_user" "raybrown" {
-  user_principal_name   = "raybrown@jennasrunbooks.com
+  user_principal_name   = "raybrown@jennasrunbooks.com"
   display_name          = "Ray Brown"
   department            = "Art"
   password              = "Super$ecret01@!"
