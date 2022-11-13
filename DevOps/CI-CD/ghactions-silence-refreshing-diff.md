@@ -5,9 +5,9 @@ _Last updated: November 12, 2022_
 ![ghactions-tfplan-refreshstate](/images/ghactions-tfplan-refreshstate.png)
 
 ## Purpose
-After working with Github Actions as my Terraform CI pipeline over the past year, I started looking for potential methods to cleaning up the  Plan outputs displayed in the PR comments in order to provide a more streamlined PR review. I was interested in finding a way to redact all of the "Refreshing state..." messages from the plan output as I find them distracting and unnecessary for the reviewer. These messages can also get quite lengthy for larger infrastructure containing many resources managed by Terraform. Essentially what Terraform is doing when generating these messages is ensuring that your state files are in alignment with the existing  infrastructure. 
+After working with Github Actions as my Terraform CI pipeline over the past year, I started looking for potential methods to cleaning up the  Plan outputs displayed in PR comments in order to provide a more streamlined PR review. I was interested in finding a way to redact the "Refreshing state..." messages as I find them distracting and unnecessary for reviewing. These messages can also get quite lengthy for larger infrastructure containing many resources managed by Terraform. Essentially what Terraform is doing when generating these messages is ensuring that your state files are in alignment with the existing  infrastructure. 
 
-I also found that you can incorporate the `diff` utility into your Actions pull-request script section to provide color highlights in the PR comments of your plan output. This runbook will cover both the lines of code needed for the `diff` utility to display results correctly and a method for silencing "Refreshing state..." messages.
+I also found that you can incorporate the `diff` utility into your Actions pull-request script section to provide color highlights in the plan output. This runbook will cover both the lines of code needed for the `diff` utility to display results correctly and a method for silencing "Refreshing state..." messages.
 
 I'll only be discussing the GH Actions jobs for Terraform plan, show, reformatting the plan, creating the plan environment variable and incorporating this into the script section of the pull-request plan output. 
 
