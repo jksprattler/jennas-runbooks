@@ -53,15 +53,7 @@ I'll only be discussing the GH Actions jobs for Terraform plan, show, reformatti
 ```
 - Update the pull-request script with the `diff` utility and the new Plan environment variable:
 
-```
-            <details><summary>Show Plan</summary>
-      
-            \`\`\`\diff\n
-            `${{ env.PLAN }}`
-            \`\`\`
-      
-            </details>
-````
+![ghactions-workflow-plan.png](/images/ghactions-workflow-plan.png)
 
 ## Conclusion
 With the Terraform jobs described above in place, the CI pipeline for the PR comments will no longer display the "Refreshing state..." messages and  color highlights will be generated for all changes (ie lines with -+~ symbols) to plan output. This provides for an overall cleaner PR comment for the reviewer as seen in this example:
