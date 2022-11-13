@@ -33,7 +33,7 @@ I'll only be discussing the GH Actions jobs for Terraform plan, show, reformatti
         run: terraform show -no-color plan > plan.txt
         continue-on-error: true
 ```
-- Create a job to Reformat the plan contents of the text file and write it to a new formatted text file. This will render the plan output in a way that the `diff` utility recognizes changes within the file as its read during the pull-request script workflow. The sed command in the job uses a Regex statement to apply spaces in front of any symbols next to resource actions by pushing them to the first column of the output. This is required in order for the `diff` utility to correctly render the output into color highlights for changes.
+- Create a job to Reformat the plan contents of the text file and write it to a new formatted text file. This will render the plan output in a way that the `diff` utility recognizes changes within the file as its read during the pull-request script workflow. The `sed` command in the job uses a Regex statement to apply spaces in front of any symbols next to resource actions by pushing them to the first column of the output. This is required in order for the `diff` utility to correctly render the output into color highlights for changes.
 
 ```
       - name: Reformat Plan 
@@ -41,7 +41,7 @@ I'll only be discussing the GH Actions jobs for Terraform plan, show, reformatti
           cat plan.txt | sed -E 's/^([[:space:]]+)([-+~])/\2\1/g' > format_plan.txt
         continue-on-error: true
 ```
-- Create a job to assign the new formatted plan output to a Github Environment variable in order to call the var from within the pull-request script. Note the line containing `"${PLAN:0:65536}"` which is required for very large plan output as the Github database sets a limit of 65536 characters on comments. Without setting this limit, if you were to submit a PR over the limit the entire pipeline would fail. However, with this setting applied a very large plan would be cut off so the reviewer would have to navigate to the Actions tab of the repo and analyze the Terraform Plan job contents.
+- Create a job to assign the new formatted plan output to a Github Environment variable in order to call the var from within the pull-request script. Note the line containing `"${PLAN:0:65536}"` which is required for very large plan output as the Github database sets a limit of 65536 characters on comments. Without setting this limit, if you were to submit a PR over the limit the pipeline would fail. However, with this setting applied a very large plan would be truncated. In a truncated scenario, the reviewer can navigate to the Actions tab of the repo and analyze the full Terraform Plan job contents of the workflow.
 
 ```
       - name: Put Plan in Env Var
@@ -53,7 +53,7 @@ I'll only be discussing the GH Actions jobs for Terraform plan, show, reformatti
 ```
 - Update the pull-request script with the `diff` utility and the new Plan environment variable:
 
-```
+```scss
             <details><summary>Show Plan</summary>
       
             \`\`\`\diff\n
@@ -64,6 +64,6 @@ I'll only be discussing the GH Actions jobs for Terraform plan, show, reformatti
 ````
 
 ## Conclusion
-With the Terraform jobs discussed above in place, the CI pipeline for the PR comments will no longer display the "Refreshing state..." messages and  color highlights will be generated for all changes (ie lines with -+~ symbols). This provides for an overall cleaner PR comment for the reviewer:
+With the Terraform jobs described above in place, the CI pipeline for the PR comments will no longer display the "Refreshing state..." messages and  color highlights will be generated for all changes (ie lines with -+~ symbols) to plan output. This provides for an overall cleaner PR comment for the reviewer as seen in this example:
 
 ![ghactions-tfplan-norefreshstate](/images/ghactions-tfplan-norefreshstate.png)
