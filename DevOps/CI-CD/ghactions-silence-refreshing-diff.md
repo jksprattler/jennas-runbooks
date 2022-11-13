@@ -53,11 +53,11 @@ I'll only be discussing the GH Actions jobs for Terraform plan, show, reformatti
 ```
 - Update the pull-request script with the `diff` utility and the new Plan environment variable:
 
-```scss
+```
             <details><summary>Show Plan</summary>
       
             \`\`\`\diff\n
-            ${{ env.PLAN }}
+            `${{ env.PLAN }}`
             \`\`\`
       
             </details>
