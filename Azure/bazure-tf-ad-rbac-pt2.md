@@ -12,8 +12,8 @@ After publishing my [initial runbook](https://jksprattler.github.io/jennas-runbo
 
 - GH Actions SPN creation and permission configurations done in Terraform
 - GH Actions SPN gets further locked down with reduced privileges from Subscription Owner to specific API Reader level permissions
-- Azure AD Users managed by a Terraform for_each script using data populated into a CSV file resulting in much less Terraform resource block code overhead when managing users
-- Azure AD Group members assigned using Terraform for_each loop against users assigned to a specific Department
+- Azure AD Users managed by a Terraform for_each meta-argument using data populated into a CSV file
+- Azure AD Group members assigned using Terraform for_each meta-argument against users assigned to a specific Department
 
 ### Pre-requisites
 
