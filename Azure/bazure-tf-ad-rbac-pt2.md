@@ -20,13 +20,14 @@ After publishing my [initial runbook](https://jksprattler.github.io/jennas-runbo
 - See Part 1 runbook: [Azure AD & RBAC with Terraform](https://jksprattler.github.io/jennas-runbooks/Azure/azure-tf-ad-rbac.html#pre-requisites)
 - Ensure Security defaults are disabled in order to enable the creation of a Conditional Access policy. 
   - From the Portal UI navigate to Azure AD > properties > manage security defaults > enable security defaults toggle to no.
+- Not required: if you're interested in how I got the highlighted changes in my GH Actions bot PR comments see my runbook: [Silence "Refreshing state…" & Highlight Changes in Github Actions Terraform Plan Output](https://jksprattler.github.io/jennas-runbooks/DevOps/CI-CD/ghactions-silence-refreshing-diff.html)
 
 ### Design Artifacts
 
 - YouTube [demo recording](FIXME)
 - Clone/Fork the repo containing the Terraform artifacts for the Azure AD config here: [jksprattler/azure-security](https://github.com/jksprattler/azure-security)
   - Relevant files are under `/azuread-users-groups-roles-pt2`
-  - Config for the GH Actions SPN, storage account and blob container hosting the terraform backend state files is under `/azure-dev-infra`
+- Config for the GH Actions SPN, storage account and blob container hosting the terraform backend state files is under `/azure-dev-infra`
 
 ### Procedure
 
@@ -49,19 +50,19 @@ ARM_CLIENT_SECRET="<auth_client_secret>"
 ```tip
 In the previous runbook, step 4. mentioned assigning the SPN the User Admin AD role however, I found this is not required. Also, the Subscription Owner RBAC role is not needed since we can assign granular Reader API permissions on the SPN - we just need it to be allowed to read the data during the terraform plan. 
 ```
-5. Populate the `users.csv` file with users. If you're importing an existing Azure AD user base into Terraform, navigate in the Portal UI to Azure AD > Users : Download users to capture a csv file of existing users. Extract the user data from the existing CSV file and populate the `users.csv` Terraform file with the required fields: first_name,last_name,mail_nickname,preferred_language
+5. Populate the `users.csv` file with users. If you're importing an existing Azure AD user base into Terraform, navigate in the Portal UI to Azure AD > Users : Download users to capture a csv file of existing users. Extract the user data from the existing CSV file and populate the `users.csv` Terraform file with the required fields: `first_name,last_name,mail_nickname,preferred_language`
 ```tip
-The usage_location is required with Microsoft licenses assigned to a user
+The `usage_location` value is required for users that are assgined Microsoft licenses such as O365
 ```
 6. Assign the users to a `department` such as Art or Engineering if you'd like to auto-assign them to the Azure AD Groups created in this lab. The Art group uses Dynamic Membership to assign users requiring the Azure AD Premium P1 license. The Art group also includes a Conditional Access policy assignment enforcing MFA authentication into the portal for all users in the group. The Engineering group resource block includes a for_each argument which loops through all users and for each user assigned to the Engineering department it assigns their membership to the Engineering group. The Engineering group does not require any Azure AD Premium licenses and is a nice option for automating group membership when you want to keep costs down and don't require the use of conditional access policies.
 7. Save and commit the changes. Review the `github-actions` bot output in your PR comments which uses the `gh-actions-runbooks-ad` SPN created in Step 2. Make adjustments to your code as needed.
 8. Perform a manual terraform apply from your local directory.
 ```tip
-- Terraform will assign each Azure AD user resource a unique ID using the mail_nickname value set in the users.csv file. This identifier can be used for assigning Azure AD group owner/membership. 
+- Terraform will assign each Azure AD user resource a unique ID using the `mail_nickname` value set in the `users.cs`v` file. This identifier can be used for assigning Azure AD group owner/membership. 
 - User Principal Names are used for the Azure Portal login username and will require a password reset upon initial login. The new user will be created with an auto-generated password using the following pattern in all lowercase letters in a single string: `lastname + first letter of first name + numerical value for length of first name + !123`
   - I added chars `123` as I found the Microsoft password length requirement was not met on users with last names less than 5 chars long. This should fix that issue.
 ```
-9. To delete users, remove the entire line entry for that user from the `users.csv` file and be sure to remove any user identifiers (ie `azuread_user.users["userarose"]`) manually assigned to Azure AD groups.
+9. To delete users, remove the entire line entry for that user from the `users.csv` file and be sure to remove any user identifiers (i.e., `azuread_user.users["userarose"]`) manually assigned to Azure AD groups.
 
 ### Validations
 
@@ -73,4 +74,4 @@ The usage_location is required with Microsoft licenses assigned to a user
 
 ### Conclusion
 
-You now have much more efficient method for managing Azure AD Users using the CSV file and Terraform `for_each` meta-arguments. Azure AD Group membership is dynamically configured using `for_each` meta-arguments against department names assigned to users which excludes the requirement for purchasing Azure AD Premium P1 licenses. The SPN used by the Github Actions workflow is further locked down to adhere to the principal of least privileges and it's configured in the Terraform code. Having your AD users, groups and SPN's configured as code allows for consistency in your configuration settings. It also increases a level of security awareness since PR's will require review/approval for code changes.
+You now have much more efficient method for managing Azure AD Users using the CSV file and Terraform `for_each` meta-arguments. Azure AD Group membership is dynamically configured using `for_each` meta-arguments against department names assigned to users which excludes the requirement for purchasing Azure AD Premium P1 licenses. The SPN used by the Github Actions workflow is further locked down to adhere to the principal of least privileges and it's configured in the Terraform code. Having your AD users, groups and SPN's configured as code allows for consistency of settings and permissions across your infrastructure. It also increases a level of security awareness since PR's will require review/approval for code changes.
