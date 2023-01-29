@@ -2,9 +2,11 @@
 
 _Last updated: January 29, 2023_
 
+![bazure-tf-ad-rbac-pt2.png](/images/bazure-tf-ad-rbac-pt2.png)
+
 ## Overview
 
-Much easier to import a list of current Azure AD users into Terraform - no need for script
+After my [initial runbook](https://jksprattler.github.io/jennas-runbooks/Azure/azure-tf-ad-rbac.html) on this topic, I ended up implementing the Terraform `for_each` meta-argument against a CSV file as documented by [HashiCorp](https://developer.hashicorp.com/terraform/tutorials/azure/azure-ad) for managing the Azure AD User base in a production environment I'm currently managing. In this Part 2 series of Azure AD & RBAC with Terraform, I define the requirements for getting user administration to work using this alternative method. I've also highlighted some tips for gotcha's I ran into during these deployments and a Validation section containing helpful commands for post implementation checkouts and troubleshooting. While I think the Part 1 runbook is still useful since I go into a deep dive on the security behind Azure AD and RBAC on Users and Groups, I've found it much more efficient to manage Users using the CSV file method. It's also much easier to import a list of current Azure AD users into Terraform since you can extract a CSV file of your existing users from the Azure AD Users portal menu and populate your Terraform `users.csv` file relatively quickly with this data rather than creating a separate Terraform resource block for every single managed user.
 
 ### Topics Covered:
 
