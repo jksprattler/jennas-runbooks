@@ -6,7 +6,7 @@ _Last updated: January 29, 2023_
 
 ## Overview
 
-After publishing my [initial runbook](https://jksprattler.github.io/jennas-runbooks/Azure/azure-tf-ad-rbac.html) exploring this topic, I ended up proceding with [HashiCorp](https://developer.hashicorp.com/terraform/tutorials/azure/azure-ad) `for_each` meta-argument for managing the Azure AD User base in a production environment I'm currently managing and wanted to share my findings from that procedure here. In this Part 2 series of Azure AD & RBAC with Terraform, I define the requirements for setting up user administration using this alternative method. I've also highlighted some tips for issues I ran into during the implementation and a Validation section containing helpful commands for post checkouts and troubleshooting. While the Part 1 runbook is still useful as I go into a deep dive on the security behind Azure AD and RBAC for Users and Groups, including some testing scenarios in the demo, I've found it to be much more efficient managing Azure AD Users and Group membership using the CSV file method.
+After publishing my [initial runbook](https://jksprattler.github.io/jennas-runbooks/Azure/azure-tf-ad-rbac.html) exploring this topic, I ended up proceding with [HashiCorp](https://developer.hashicorp.com/terraform/tutorials/azure/azure-ad) `for_each` meta-argument for managing the Azure AD User base in a production environment I'm currently managing and wanted to share my findings from that procedure here. In this Part 2 series of Azure AD & RBAC with Terraform, I define the requirements for setting up user administration using this alternative method. I've also highlighted some tips for issues I ran into during the implementation and a Validation section containing helpful commands for post checkouts and troubleshooting. While the Part 1 runbook is still useful as I go into a deep dive on the security behind Azure AD and RBAC for Users and Groups (including some testing scenarios in the YouTube demo) I've found it to be much more efficient managing Azure AD Users and Group membership using the CSV file method.
 
 ### Topics Covered:
 
@@ -65,9 +65,12 @@ The usage_location is required with Microsoft licenses assigned to a user
 
 ### Validations
 
-- List resources managed by Terraform: 
-`terraform state list`
+- List resources managed by Terraform: `terraform state list`
 - Show AD user info: `terraform state show 'azuread_user.users["userarose"]'`
 - List all Azure AD users: `az ad user list --query "[].{name:displayName,userPrincipalName:userPrincipalName, ObjectID:id}" -o tsv`
 - List the 2 groups that were created: `az ad group list --query "[?contains(displayName,'Engineering')].{ name: displayName }" -o tsv`
 - List the users in the groups: `az ad group member list --group "Engineering" --query "[].{ name: displayName }" -o tsv`
+
+### Conclusion
+
+You now have much more efficient method for managing Azure AD Users using the CSV file and Terraform `for_each` meta-arguments. Azure AD Group membership is dynamically configured using `for_each` meta-arguments against department names assigned to users which excludes the requirement for purchasing Azure AD Premium P1 licenses. The SPN used by the Github Actions workflow is further locked down to adhere to the principal of least privileges and it's configured in the Terraform code. Having your AD users, groups and SPN's configured as code allows for consistency in your configuration settings. It also increases a level of security awareness since PR's will require review/approval for code changes.
