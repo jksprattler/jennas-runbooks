@@ -48,13 +48,13 @@ ARM_CLIENT_ID="<app_id>"
 ARM_CLIENT_SECRET="<auth_client_secret>"
 ```
 ```tip
-In the previous runbook, step 4. mentioned assigning the SPN the User Admin AD role however, I found this is not required. Also, the Subscription Owner RBAC role is not needed since we can assign granular Reader API permissions on the SPN - we just need it to be allowed to read the data during the terraform plan. 
+In the previous runbook, step 4. mentioned assigning the SPN the User Admin AD role however, I found this is not required with the API Permissions configured to allow AD User, Group and Domain Reader access. The Subscription Owner RBAC role is not needed since we can assign the Subscription Reader RBAC role as we just need it to be allowed to read the data during the terraform plan. 
 ```
 5. Populate the `users.csv` file with users. If you're importing an existing Azure AD user base into Terraform, navigate in the Portal UI to Azure AD > Users : Download users to capture a csv file of existing users. Extract the user data from the existing CSV file and populate the `users.csv` Terraform file with the required fields: `first_name,last_name,mail_nickname,preferred_language`
 ```tip
 The `usage_location` value is required for users that are assgined Microsoft licenses such as O365
 ```
-6. Assign the users to a `department` such as Art or Engineering if you'd like to auto-assign them to the Azure AD Groups created in this lab. The Art group uses Dynamic Membership to assign users requiring the Azure AD Premium P1 license. The Art group also includes a Conditional Access policy assignment enforcing MFA authentication into the portal for all users in the group. The Engineering group resource block includes a for_each argument which loops through all users and for each user assigned to the Engineering department it assigns their membership to the Engineering group. The Engineering group does not require any Azure AD Premium licenses and is a nice option for automating group membership when you want to keep costs down and don't require the use of conditional access policies.
+6. Assign the users to a `department` such as Art or Engineering if you'd like to auto-assign them to the Azure AD Groups created in this lab. The Art group uses Dynamic Membership to assign users requiring the Azure AD Premium P1 license. The Art group also includes a Conditional Access policy assignment enforcing MFA into the portal for all users in the group. The Engineering group resource block includes a for_each argument which loops through all users and for each user assigned to the Engineering department it assigns their membership to the Engineering group. The Engineering group does not require any Azure AD Premium licenses and is a nice option for automating group membership when you want to keep costs down and don't require the use of conditional access policies.
 7. Save and commit the changes. Review the `github-actions` bot output in your PR comments which uses the `gh-actions-runbooks-ad` SPN created in Step 2. Make adjustments to your code as needed.
 8. Perform a manual terraform apply from your local directory.
 ```tip
