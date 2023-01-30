@@ -1,6 +1,6 @@
 # Azure AD & RBAC with Terraform Part 2
 
-_Last updated: January 29, 2023_
+_Last updated: January 30, 2023_
 
 ![bazure-tf-ad-rbac-pt2.png](/images/bazure-tf-ad-rbac-pt2.png)
 
@@ -11,7 +11,7 @@ After publishing my [initial runbook](https://jksprattler.github.io/jennas-runbo
 ### Topics Covered:
 
 - GH Actions SPN creation and permission configurations done in Terraform
-- GH Actions SPN gets further locked down with reduced privileges from Subscription Owner to specific API Reader level permissions
+- GH Actions SPN gets further locked down with reduced privileges from Subscription Owner to Reader and from User Admin to specific API Reader level permissions
 - Azure AD Users managed by a Terraform for_each meta-argument using data populated into a CSV file
 - Azure AD Group members assigned using Terraform for_each meta-argument against users assigned to a specific Department
 
