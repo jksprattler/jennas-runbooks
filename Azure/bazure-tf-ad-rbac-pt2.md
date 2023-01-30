@@ -24,7 +24,7 @@ After publishing my [initial runbook](https://jksprattler.github.io/jennas-runbo
 
 ### Design Artifacts
 
-- YouTube [demo recording](FIXME)
+- YouTube [demo recording](https://youtu.be/cIqvYL9burQ)
 - Clone/Fork the repo containing the Terraform artifacts for the Azure AD config here: [jksprattler/azure-security](https://github.com/jksprattler/azure-security)
   - Relevant files are under `/azuread-users-groups-roles-pt2`
 - Config for the GH Actions SPN, storage account and blob container hosting the terraform backend state files is under `/azure-dev-infra`
