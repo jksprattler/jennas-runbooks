@@ -1,12 +1,12 @@
 # Azure AD & RBAC with Terraform Part 2
 
-_Last updated: January 30, 2023_
+_Last updated: January 31, 2023_
 
 ![bazure-tf-ad-rbac-pt2.png](/images/bazure-tf-ad-rbac-pt2.png)
 
 ## Overview
 
-After publishing my [initial runbook](https://jksprattler.github.io/jennas-runbooks/Azure/azure-tf-ad-rbac.html) exploring this topic, I decided test out and implement the [HashiCorp](https://developer.hashicorp.com/terraform/tutorials/azure/azure-ad) `for_each` meta-argument method for managing the Azure AD User base of a production environment I'm currently working with. I wanted to share my findings from that experience here. In this 2nd part of my series on Azure AD & RBAC with Terraform, I define the requirements necessary for setting up Azure AD User and Group administration using this alternative method. I've also highlighted some tips from issues I ran into during my implementation of this and a Validation section containing helpful commands for post checkouts and troubleshooting. While the initial runbook and demo in this series still contains useful information such as a deep dive on the security behind Azure AD and RBAC, including some testing scenarios logging in as various users in the Portal UI, I've found this CSV file method to be much more efficient at managing users and group membership. Also, I've refined the security privileges around the GitHub Actions SPN and have implemented the creation and management of the SPN, including its API permissions, using Terraform resource blocks.
+After publishing my [initial runbook](https://jksprattler.github.io/jennas-runbooks/Azure/azure-tf-ad-rbac.html) exploring this topic, I decided test out and implement the [HashiCorp](https://developer.hashicorp.com/terraform/tutorials/azure/azure-ad) `for_each` meta-argument method for managing the Azure AD User base of a production environment I'm currently working with. I wanted to share my findings from that experience here. In this 2nd part of my series on Azure AD & RBAC with Terraform, I define the requirements necessary for setting up Azure AD User and Group administration using this alternative method. I've also highlighted some tips from issues I ran into during my implementation of this and a Validation section containing helpful commands for post-checkouts and troubleshooting. While the initial runbook and demo in this series still contains useful information such as a deep dive on the security behind Azure AD and RBAC and some test login scenarios, I've found this CSV file method to be much more efficient at managing users and group membership. Also, I've refined the security privileges around the GitHub Actions SPN and have implemented the creation and management of the SPN, including its API permissions, using Terraform resource blocks.
 
 ### Topics Covered:
 
@@ -58,7 +58,7 @@ The `usage_location` value is required for users that are assgined Microsoft lic
 7. Save and commit the changes. Review the `github-actions` bot output in your PR comments which uses the `gh-actions-runbooks-ad` SPN created in Step 2. Make adjustments to your code as needed.
 8. Perform a manual terraform apply from your local directory.
 ```tip
-- Terraform will assign each Azure AD user resource a unique ID using the `mail_nickname` value set in the `users.cs`v` file. This identifier can be used for assigning Azure AD group owner/membership. 
+- Terraform will assign each Azure AD user resource a unique ID using the `mail_nickname` value set in the `users.csv` file. This identifier can be used for assigning Azure AD group owner/membership. 
 - User Principal Names are used for the Azure Portal login username and will require a password reset upon initial login. The new user will be created with an auto-generated password using the following pattern in all lowercase letters in a single string: `lastname + first letter of first name + numerical value for length of first name + !123`
   - I added chars `123` as I found the Microsoft password length requirement was not met on users with last names less than 5 chars long. This should fix that issue.
 ```
