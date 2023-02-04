@@ -7,7 +7,7 @@ You can also find me on:
 - [Hashnode](https://blog.jennasrunbooks.com/)
 - [LinkedIn](https://www.linkedin.com/in/jennasprattler/)
 - [GitHub](https://github.com/jksprattler)
-- [YouTube](https://www.youtube.com/channel/UC00Co9dzh7sUjNYVjidG95w)
+- [YouTube](https://www.youtube.com/@jennasrunbooks)
 
 ## Table of Contents
 
